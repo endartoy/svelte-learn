@@ -1,0 +1,42 @@
+import { writable } from "svelte/store";
+
+function createAlert() {
+    const {subscribe, update} = writable([])
+
+    let timeOutId
+    const autoHide = (id) => {
+        timeOutId = setTimeout(() => {
+            update((alerts) => (
+                alerts.filter(alert => alert.id !== id)
+            ))
+        }, 5000)
+    }
+
+    return {
+        subscribe,
+        show: (message, type = 'success') => {
+            const newAlert = {
+                id: crypto.randomUUID(),
+                message: message,
+                type: type
+            }
+            update((last) => (
+                [newAlert, ...last]
+            ))
+            autoHide(newAlert.id)
+        },
+        pauseHide: () => {
+            clearTimeout(timeOutId)
+        },
+        resumeHide: () => {
+            autoHide(id)
+        },
+        hide: (id) => {
+            update((alerts) => (
+                alerts.filter(alert => alert.id !== id)
+            ))
+        }
+    }
+}
+
+export const alertStore = createAlert()
