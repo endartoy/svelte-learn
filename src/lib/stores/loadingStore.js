@@ -1,12 +1,12 @@
 import { writable } from "svelte/store";
 
 function createLoading() {
-    let { subscribe, update } = writable(false)
+    let { subscribe, update } = writable(0)
 
     return {
         subscribe,
-        show:() => { update(() => (true)) },
-        hide:() => { update(() => (false)) }
+        show:() => { update((lv) => (lv+1)) },
+        hide:() => { update((lv) => (lv-1)) }
     }
 }
 

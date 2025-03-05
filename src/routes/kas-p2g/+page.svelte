@@ -1,12 +1,12 @@
 <script lang="ts">
     import { userStore } from "$lib/stores/userStores";
-
 	import { alertStore } from "$lib/stores/alertStore";
+	import { loadingStore } from "$lib/stores/loadingStore";
 
     import ModalForm, { modalForm } from "./ModalForm.svelte";
     import ComponentTable from "./ComponentTable.svelte";
     import { getKasP2g } from "$lib/firebase";
-	import { onMount } from "svelte";
+	import { onDestroy, onMount } from "svelte";
 	import { viewRupiah, dateOption } from "$lib/tools";
 	import jsPDF from "jspdf";
 
@@ -205,7 +205,7 @@
             ]
         ]
         autoTable(doc, {
-            startY: doc.lastAutoTable.finalY,
+            startY: doc.lastAutoTable.finalY + 10,
             theme: 'plain',
             body: paraf,
             tableWidth: 'auto',
@@ -245,6 +245,7 @@
     }
 
     $effect(() => {
+        loadingStore.show()
         const filterVal = new Date(dateFilter)
         const dataLama = dataKas.filter((kas) => new Date(kas.tanggal) < filterVal )
         const dataBaru = dataKas.filter((kas) => new Date(kas.tanggal) >= filterVal )
@@ -277,28 +278,33 @@
         dataFitered.debit = dataDebit
         dataFitered.kredit = dataKredit
         dataFitered.saldo = dataDebit.jumlah - dataKredit.jumlah
+
+        loadingStore.hide()
     })
-    
-    onMount(() => {
-        let unSubscribe
-    
+
+    let unSbuscribe
+    onMount(async() => {
         try {
-            unSubscribe = getKasP2g((snapshot, error) => {  
-                if (error) alertStore.show(error, 'danger')
-                
+            loadingStore.show()
+            unSbuscribe = await getKasP2g((snapshot) => {  
                 if (!snapshot.empty) {
                     dataKas = snapshot.docs.map((doc) => ({
                         id: doc.id,
                         ...doc.data(),
                         tanggal: doc.data().tanggal.toDate()
                     }))
+                    // console.log(snapshot.docChanges())
                 }
             })
+            .catch(error => alertStore.show(error, 'danger'))
+            .finally(() => loadingStore.hide())
         } catch (error) {
             alertStore.show(error, 'danger')
-        }      
-        
-        return() => unSubscribe()
+        }
+    })
+
+    onDestroy(() => {
+        if (unSbuscribe) unSbuscribe();
     })
 </script>
 
@@ -308,12 +314,17 @@
         <div class="col-auto">
             <input type="date" bind:value={dateFilter} class="input" />
         </div>
-            {#if $userStore?.role === 'superadmin'}
-            <div class="col-0">
-                <button onclick={buttonToPdf} class="button secondary">Export PDF</button>
-                <button onclick={() => modalForm.show()} class="button primary">+</button>
-            </div>
-            {/if}
+        
+        {#if ['superadmin', 'admin'].includes($userStore?.role)}
+        <div class="col-0">
+            <button onclick={buttonToPdf} class="button secondary">
+                <span>Export PDF</span>
+            </button>
+            <button onclick={() => modalForm.show()} class="button primary" aria-label='tambah data'>
+                <span class="icon"><i class="fa-solid fa-plus"></i></span>
+            </button>
+        </div>
+        {/if}
     </div>
 
     <div class="row">

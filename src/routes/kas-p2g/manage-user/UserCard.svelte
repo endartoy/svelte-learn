@@ -69,7 +69,7 @@
     }
 </script>
 
-<div class="user-card {!user?.role ? 'unregistered' : ''}">
+<div class="user-card {!user?.role ? 'unregistered' : ''}" >
     <div class="body">
         <img class="avatar" src={user?.photoURL ? user?.photoURL : '/p2g.png'} alt="user avatar">
         <span class="username"> {user?.displayName || 'Username'} </span>
@@ -81,8 +81,14 @@
     </div>
 
     <div class="footer" >
-        <button onclick={() => fnDeleteUser()} class="button danger"> HAPUS </button>
-        <button onclick={() => {!isEdit ? toggleEdit() : toggleUpdate()}} class="button {!isEdit ? 'warning' : 'primary'}"> {!isEdit ? 'EDIT' : 'SIMPAN'} </button>
+        <button onclick={() => fnDeleteUser()} class="button danger">
+            <span>HAPUS</span>
+            <span><i class="fa-solid fa-trash-can"></i></span>
+        </button>
+        <button onclick={() => {!isEdit ? toggleEdit() : toggleUpdate()}} class="button {!isEdit ? 'warning' : 'primary'}"> 
+            <span>{!isEdit ? 'EDIT' : 'SIMPAN'}</span> 
+            <span><i class="fa-solid fa-floppy-disk"></i></span>
+        </button>
     </div>
 </div>
 

@@ -1,0 +1,68 @@
+<script module>
+	import { writable } from "svelte/store";
+    let isShowLogin = writable(false)
+
+    const showLogin = () => { isShowLogin.set(true) }
+    const hideLogin = () => { isShowLogin.set(false) }
+
+    export { isShowLogin, showLogin }
+</script>
+
+<script>
+    import { supabaseSignIn } from "$lib/supabase/supabaseAuth";
+    import { loadingStore } from "$lib/stores/loadingStore";
+    import { alertStore } from "$lib/stores/alertStore";
+
+	import { fade } from "svelte/transition";
+
+    let email = $state(null)
+    const signInSupabase = () => {
+        if (!email) {
+            alertStore.show('Email tidak boleh kosng', 'danger')
+            return
+        }
+
+        loadingStore.show()
+        supabaseSignIn(email)
+            .then(() => {
+                alertStore.show('Silahkan cek email anda')
+                hideLogin()
+            })
+            .catch((error) => {
+                alertStore.show(error.message, 'danger')
+            })
+            .finally(() => loadingStore.hide())
+    }
+</script>
+
+<div class="modal-container" transition:fade={{duration: 100}}>
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div class="modal-backdrop" onclick={hideLogin}></div>
+
+    <div class="modal-content">
+        <form onsubmit={(e) => { e.preventDefault(); signInSupabase() }} class="form-login">
+            <input bind:value={email} type="email" class="input" placeholder="Email" required />
+            <button type="submit" class="button primary"> Login </button>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* variabel */
+    :root {
+        --form-width: 95vw;
+        @media (min-width: 480px) { --form-width: 95vw;}
+        @media (min-width: 768px) { --form-width: 50vw;}
+        @media (min-width: 1024px) { --form-width: 30vw;}
+    }
+
+    .form-login {
+        width: var(--form-width);
+        display: flex;
+        flex-direction: column;
+        /* column-gap: 5px; */
+        row-gap: 5px;
+    }
+</style>
+

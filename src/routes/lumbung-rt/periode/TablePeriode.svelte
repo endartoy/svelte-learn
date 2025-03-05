@@ -1,61 +1,60 @@
 <script>
-	let { title, type, data, buttonFilter = null } = $props();
-
-	import { viewRupiah, dateOption } from "$lib/tools";
+	let { tb_periode } = $props();
+	import { dateOption } from "$lib/tools";
 	import { fade } from "svelte/transition";
-	import { modalForm } from "./ModalForm.svelte";
 </script>
 
-<div class="table-container {type}">
-	<span class="table-title"> {title.toUpperCase()} </span>
+<div class="table-container">
+	<span class="table-title">Periode Pinjaman</span>
 
 	<div class="table-body">
 		<table>
 			<thead>
 				<tr>
-					<th style="width: 30px">#</th>
-					<th style="width: 90px">Tanggal</th>
-					<th>Keterangan</th>
-					<th style="width: 90px">Jumlah</th>
+                    <th style="width: 50px;" >#</th>
+					<th>Periode</th>
+					<th>Jasa</th>
+                    <th>Tgl. Pinjam</th>
+                    <th>Tgl. Bayar</th>
+                    <th></th>
 				</tr>
 			</thead>
 			<tbody>
-				{#each data.data as res, i}
-				<tr transition:fade
-					onclick={() => res.id ? modalForm.show(res) : buttonFilter()} 
-				>
-					<td class="text-center text-bold"> {i+1} </td>
-					<td> {res?.tanggal.toLocaleDateString('id-ID', dateOption.duadigit)} </td>
-                    <td style="white-space: pre-line;">{res?.ket.replace(/\\n/g, '\n')}</td>
-					<td class="text-end"> {viewRupiah(res?.jumlah)} </td>
+				{#each tb_periode as res, i}
+				<tr in:fade>
+					<td class="text-center text-bold"> {i + 1} </td>
+					<td> {res?.nama_periode} </td>
+                    <td class="text-center"> {res?.jasa} </td>
+					<td class="text-center"> 
+                        {new Date(res?.tgl_pinjam).toLocaleDateString('id-ID', dateOption.duadigit)} 
+                    </td>
+					<td class="text-center"> 
+                        {res?.tgl_bayar ? new Date(res?.tgl_bayar).toLocaleDateString('id-ID', dateOption.duadigit) : '-'} 
+                    </td>
+                    <td class="text-center" >
+                        <a href="./periode/{res?.id}" aria-label="laporan per periode" >
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </td>
 				</tr>
                 {:else}
                 <tr>
-					<th class="text-center" colSpan="4"> Tidak ada data </th>
+					<th class="text-center" colSpan="6"> Tidak ada data </th>
 				</tr>
 				{/each}
 			</tbody>
 		</table>
 	</div>
-
-	<div class="table-footer">
-		<span>TOTAL</span>
-		<span> {viewRupiah(data.jumlah)} </span>
-	</div>
 </div>
 
 <style>
-	:root {
-		--debit: #a5d6a7;
-        --kredit: #ffe082;
-	}
-
 	.table-container {
-        --color-table: white;
+        --color-table: #B1C29E;
+
         background-color: color-mix(in srgb, var(--color-table), white 50%);
         height: 100%;
         padding: var(--cel-gap);
-        padding-bottom: 50px;
+        /* padding-bottom: 50px; */
         position: relative;
         overflow-x: auto;
 
@@ -93,26 +92,6 @@
                     }
                 }
             }
-        }
-
-        > .table-footer {
-            width: calc(100% - 2 * var(--cel-gap));
-            padding: var(--cel-gap); 
-            display: flex;
-            justify-content:space-between;
-
-            position: absolute;
-            bottom: 0;
-
-            > span { font-weight: bold; font-size: large; }
-        }
-        
-        &.debit {
-            --color-table: var(--debit);
-        }
-
-        &.kredit {
-            --color-table: var(--kredit);
         }
     }
 </style>

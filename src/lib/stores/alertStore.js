@@ -3,9 +3,9 @@ import { writable } from "svelte/store";
 function createAlert() {
     const {subscribe, update} = writable([])
 
-    let timeOutId
+    let timeOutId = []
     const autoHide = (id) => {
-        timeOutId = setTimeout(() => {
+        timeOutId[id] = setTimeout(() => {
             update((alerts) => (
                 alerts.filter(alert => alert.id !== id)
             ))
@@ -25,16 +25,17 @@ function createAlert() {
             ))
             autoHide(newAlert.id)
         },
-        pauseHide: () => {
-            clearTimeout(timeOutId)
+        pauseHide: (id) => {
+            clearTimeout(timeOutId[id])
         },
-        resumeHide: () => {
+        resumeHide: (id) => {
             autoHide(id)
         },
         hide: (id) => {
             update((alerts) => (
                 alerts.filter(alert => alert.id !== id)
             ))
+            clearTimeout(timeOutId[id])
         }
     }
 }

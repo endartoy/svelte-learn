@@ -47,6 +47,7 @@
         > .sm\:col-2 { flex: 0 1 50%; max-width: 50%; }
         > .sm\:col-3 { flex: 0 1 33.33%; max-width: 33.33%; }
         > .sm\:col-4 { flex: 0 1 100%; max-width: 100%; }
+        > .sm\:col-auto { flex: 1 0 0; }
     }
 }
 
@@ -58,6 +59,7 @@
         > .md\:col-2 { flex: 0 1 50%; max-width: 50%; }
         > .md\:col-3 { flex: 0 1 33.33%; max-width: 33.33%; }
         > .md\:col-4 { flex: 0 1 100%; max-width: 100%; }
+        > .md\:col-auto { flex: 1 0 0; }
     }
 }
 
@@ -69,13 +71,13 @@
         > .lg\:col-2 { flex: 0 1 50%; max-width: 50%; }
         > .lg\:col-3 { flex: 0 1 33.33%; max-width: 33.33%; }
         > .lg\:col-4 { flex: 0 1 100%; max-width: 100%; }
+        > .lg\:col-auto { flex: 1 0 0; }
     }
 }
 
 /* Main CSS */
 .container {
     background-color:white;
-    flex: 1;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -90,16 +92,30 @@
     height: 100dvh;
     backdrop-filter: blur(0.3em);
 
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-items: center;
     justify-content: center;
 
-    z-index: 300;
-    display: flex;
-    flex-direction: column;
+    >.modal-backdrop {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: transparent;
+    }
+
+    >.modal-content {
+        position: relative;
+    }
 }
 
 :root {
+    .text-start {
+        text-align: start;
+    }
+
     .text-center {
         text-align: center;
     }

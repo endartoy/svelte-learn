@@ -2,7 +2,8 @@ import { error } from "@sveltejs/kit";
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth'
 import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, onSnapshot, getDocs, addDoc, updateDoc, deleteDoc } from 'firebase/firestore'
-import { formatInterger } from "./tools";
+
+import { formatInterger } from "$lib/tools";
 
 // Firebase config
 const firebaseConfig = {
@@ -24,24 +25,46 @@ const db = getFirestore(app)
 
 // observe authc changes
 const authStateListener = (callback) => {
-    return onAuthStateChanged(auth, async(user) => {
-        if (user) {
-            const userRef = doc(db, 'users', user.uid)
-            await setDoc(userRef, {
-                email: user.email,
-                displayName: user.displayName,
-                photoURL: user.photoURL
-            })
-
-            const roleRef = doc(db, 'roles', user.uid)
-            const roleData = await getDoc(roleRef)
-            if (roleData.exists()) {
-                user = { ...user, role: roleData.data().role }
-                callback(user)
-            } 
-        } else {
-            callback(null)
-        }
+    return new Promise((resolve, reject) => {
+        const unSubscribe = onAuthStateChanged(
+            auth, 
+            async(user) => {
+                try {
+                    if (user) {
+                        // Set user login
+                        const userRef = doc(db, 'users', user.uid)
+                        await setDoc(userRef, {
+                            email: user.email,
+                            displayName: user.displayName,
+                            photoURL: user.photoURL
+                        })
+                        .catch((err) => {throw new Error(err.message)})
+            
+                        // cek role
+                        const roleRef = doc(db, 'roles', user.uid)
+                        await getDoc(roleRef)
+                        .then((roleData) => {
+                            if (roleData.exists()) {
+                                user = { ...user, role: roleData.data().role }
+                                callback(user)
+                                resolve(unSubscribe)
+                            } else {
+                                throw new Error("User tidak ditemukan, silakan hubungi admin.");
+                            }
+                        })
+                        .catch((err) => { throw new Error(err.message)})  
+                    } else {
+                        // do nothing when user dont have role
+                        resolve()
+                    }
+                } catch (err) {
+                    reject(`${err?.code ? err?.code : 'error'} : ${err?.message ? err?.message : err}`)
+                }
+            },
+            (err) => {
+                reject(`${err?.code ? err?.code : 'error'} : ${err?.message ? err?.message : err}`)
+            }
+        )
     })
 }
 
@@ -57,19 +80,24 @@ const fnSignOut = async() => {
 
 // Get Data Kas
 const getKasP2g = (callback) => {
-    try {
-        let colRef = collection(db, 'kas')
-        colRef = query(colRef, orderBy('tanggal'))
+    return new Promise((resolve, reject) => {
+        try {
+            let colRef = collection(db, 'kas')
+            colRef = query(colRef, orderBy('tanggal'))
+    
+            const unSubscribe = onSnapshot(colRef, 
+                (snapshot) => {
+                    callback(snapshot)
+                },
+                (err) => { throw new Error(err.message) },
+            )
 
-        return onSnapshot(colRef, 
-            (snapshot) => { callback(snapshot, null) },
-            (err) => { throw new Error(err) }
-        )
-    } catch (err) {
-        let error = `${err?.code ? err?.code : 'error'} : ${err?.message ? err?.message : err}}`
-        callback(null, error)
-        return() => {}
-    }
+            resolve(unSubscribe)
+        } catch (err) {
+            let error = `${err?.code ? err?.code : 'error'} : ${err?.message ? err?.message : err}`
+            reject(error)
+        }
+    })
 }
 
 // Add kas
@@ -89,10 +117,10 @@ const addKas = async(formData, callback) => {
             result = 'Tambah data berhasil.'
         })
         .catch((error) => {
-            throw new Error(error);
+            throw new Error(error.message);
         })  
     } catch (error) {
-        error = `${err?.code ? err.code : 'error'} : ${err?.message ? err.message : err}}`
+        error = `${err?.code ? err.code : 'error'} : ${err?.message ? err.message : err}`
     } finally {
         callback(result, error)
         return() => {}
@@ -119,10 +147,10 @@ const updateKas = async(formData, callback) => {
             result = "Update data berhasil."
         })
         .catch((error) => {
-            throw new Error(error);
+            throw new Error(error.message);
         })  
     } catch (error) {
-        error = `${err?.code ? err.code : 'error'} : ${err?.message ? err.message : err}}`
+        error = `${err?.code ? err.code : 'error'} : ${err?.message ? err.message : err}`
     } finally {
         callback(result, error)
         return() => {}
@@ -141,9 +169,9 @@ const deleteKas = async(id, callback) => {
         const docRef = doc(db, 'kas', id)
         return await deleteDoc(docRef)
         .then(() => { result = 'Hapus data berhasil' })
-        .catch(error => { throw new Error(error); }) 
+        .catch(error => { throw new Error(error.message); }) 
     } catch (error) {
-        error = `${err?.code ? err.code : 'error'} : ${err?.message ? err.message : err}}`
+        error = `${err?.code ? err.code : 'error'} : ${err?.message ? err.message : err}`
     } finally {
         callback(result, error)
         return() => {}
@@ -175,10 +203,10 @@ const getUser = async(callback) => {
                 role: dataRole[val.id]?.role ? dataRole[val.id].role : null
             }))
         })
-        .catch((err) => { throw new Error(err) })
+        .catch((err) => { throw new Error(err.message) })
         
     } catch (err) {
-        error = `${err?.code ? err.code : 'error'} : ${err?.message ? err.message : err}}`
+        error = `${err?.code ? err.code : 'error'} : ${err?.message ? err.message : err}`
     } finally {
         callback(result, error)
         return() => {}
@@ -202,10 +230,10 @@ const updateUser = async(formData, callback) => {
             result = "Update data berhasil."
         })
         .catch((err) => {
-            error = `${err?.code ? err?.code : 'error'} : ${err?.message}`
+            error = err.message
         })  
     } catch (err) {
-        error = `${err?.code ? err?.code : 'Error'} : ${err?.message}`
+        error = `${err?.code ? err?.code : 'Error'} : ${err?.message ? err.message : err}`
     } finally {
         callback(result, error)
         return() => {}
@@ -222,11 +250,16 @@ const deleteUser = async(formData, callback) => {
 
         const docRef = doc(db, 'roles', formData.id)
         await deleteDoc(docRef)
+        // .then((res) => result = "Hapus data berhasil.")
+        .catch(err => {throw new Error(err.message)});
+
+        const userRef = doc(db, 'users', formData.id)
+        await deleteDoc(userRef)
         .then((res) => result = "Hapus data berhasil.")
-        .catch(err => {throw new Error(err)});
+        .catch(err => {throw new Error(err.message)});
 
     } catch (err) {
-        error = `${err?.code ? err.code : 'error'} : ${err?.message ? err.message : err}}`
+        error = `${err?.code ? err.code : 'error'} : ${err?.message ? err.message : err}`
     } finally {
         callback(result, error)
         return() => {}

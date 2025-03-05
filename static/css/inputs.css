@@ -39,26 +39,31 @@
 
 input, select, textarea {
     /* color */
-    --inactive: #cfd8dc;
+    --inactive: #d9e3e7;
     --active: #eceff1 ;
+    --disabled: #e2e2e2;
+    --border-radius: 4px;
     
     min-width: 100%;
     max-width: 100%;
+    min-height: 38px;
     padding: var(--padding);
     background-color: var(--inactive);
     border: none;
+    border-radius: var(--border-radius);
+    
     &:focus {
         background-color: var(--active);
     }
 
     &:disabled, &:disabled > option {
-        color: black;
+        background-color: var(--disabled);
     }
 }
 
 /* Style the dropdown arrow */
 select::-ms-expand {
-    display: none; /* Hide default arrow in IE/Edge */
+    display: none; /*Hide default arrow in IE/Edge */
 }
 
 select {

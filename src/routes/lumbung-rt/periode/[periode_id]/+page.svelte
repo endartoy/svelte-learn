@@ -1,0 +1,297 @@
+<script>
+	import { page } from "$app/state";
+    import { onMount } from "svelte";
+	import { fade } from "svelte/transition";
+	import { goto } from "$app/navigation";
+
+    import { getPeriodeById } from "$lib/supabase/tb_periode";
+	import { loadingStore } from "$lib/stores/loadingStore";
+    import { alertStore } from "$lib/stores/alertStore";
+    import { userSupabaseStore } from "$lib/stores/userStores";
+    import { dateOption, viewRupiah } from "$lib/tools";
+	import { getSisaPinjamByPeriode } from "$lib/supabase/sisa_pinjam";
+
+	import ModalFormPeriode, { modalForm } from "../ModalFormPeriode.svelte";
+	import FormAction, { formAction } from "./FormAction.svelte";
+    import { printPDF } from "./PrintPDF.svelte"
+
+    import jsPDF from "jspdf";
+	import PrintPdf from "./PrintPDF.svelte";
+
+    // get param
+    let periode_id = page.params.periode_id
+
+    // get data pinjam
+    let filter_value = $state(false)
+    let temp_data_pinjam = $state({ data: [], sum: {}})
+    let data_pinjam = $derived(
+        filter_value
+            ? temp_data_pinjam.data.filter((res) => res.pinjam_total > 0)
+            : temp_data_pinjam.data
+    )
+    const getDataPinjam = async() => {
+        loadingStore.show()
+        await getSisaPinjamByPeriode(periode_id)
+            .then((data) => {
+                temp_data_pinjam = data
+            })
+            .catch((error) => {
+                alertStore.show(error.message ? error.message : 'Error: Terjadi kesalahan server', 'danger')
+            })
+            .finally(() => loadingStore.hide())
+    }
+
+    // get data periode
+    let data_periode = $state({...modalForm.formData})    
+    const getPeriode = async() => {
+        loadingStore.show()
+        await getPeriodeById(periode_id)
+            .then((data) => {
+                data_periode = data
+                getDataPinjam()
+            })
+            .catch((error) => {
+                alertStore.show(error.message ? error.message : 'Error: Terjadi kesalahan server', 'danger')
+                goto('/lumbung-rt/periode', {replaceState: true})
+            })
+            .finally(() => loadingStore.hide())
+    }
+
+    // Check is admin or not
+    const _isAdmin = $derived(
+        ['admin', 'superadmin'].includes($userSupabaseStore?.user?.user_role)
+    )
+
+    onMount(() => {
+        if (!periode_id) {
+            goto('/lumbung-rt/periode', {replaceState: true})
+            return
+        }
+        
+        getPeriode()
+    })
+</script>
+
+<div class="container">
+    <div class="row gap-0">
+        <div class="col-4 gap-0">
+            <div class="table-container detail">
+                <div class="table-title"> 
+                    <div>
+                        <button class="button small" style="color: blue;" onclick={() => goto('/lumbung-rt/periode')} aria-label="back" > 
+                            <i class="fa-solid fa-arrow-left"></i> 
+                        </button>
+                        Periode { data_periode.nama_periode }
+                    </div>
+
+                    {#if _isAdmin}
+                    <div>
+                        <button class="button small" aria-label="edit" onclick={() => printPDF.show()} >
+                            <i class="fa-solid fa-print"></i>
+                        </button>
+
+                        <button class="button small" aria-label="edit" onclick={() => modalForm.show(data_periode)} >
+                            <i class="fa-solid fa-pencil"></i>
+                        </button>
+                    </div>
+                    {/if}
+                </div>
+            
+                <div class="table-body">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td style="width: 150px;">Jasa</td>
+                                <td>{data_periode.jasa * 100} Persen</td>
+                            </tr>
+                            <tr>
+                                <td>Tgl. Pinjam</td>
+                                <td>{new Date(data_periode.tgl_pinjam).toLocaleDateString('id-ID', dateOption.dateForKasList)}</td>
+                            </tr>
+                            <tr>
+                                <td>Tgl. Pembayaran</td>
+                                <td>
+                                    { data_periode?.tgl_bayar 
+                                        ? new Date(data_periode.tgl_bayar).toLocaleDateString('id-ID', dateOption.dateForKasList)
+                                        : '-' }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Catatan</td>
+                                <td>{data_periode?.ket?.replace(/\\n/g, '\n')}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row gap-0">
+        <div class="col-4">
+            <div class="table-container">
+                <div class="table-title">
+                    <span> Daftar Pinjaman </span>
+
+                    <div class="toggle-filter">
+                        <span>Filter anggota</span>
+                        <div><input class="toggle" type="checkbox" bind:checked={filter_value} /></div>
+                    </div>
+                </div>
+            
+                <div class="table-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;" >#</th>
+                                <th>Nama</th>
+                                <th>Pinj. Lama</th>
+                                <th>Pinj. Baru</th>
+                                <th>Total Pinj.</th>
+                                <th>Jasa</th>
+                                <th>Pinj. + Jasa</th>
+                                <th>Bayar</th>
+                                <th>Ket</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {#each data_pinjam as res, i}
+                            <tr 
+                            in:fade
+                            class:sisa_pinjam={res.sisa_pinjam > 0}
+                            class:bayar={res.jumlah_bayar > 0 & res.sisa_pinjam > 0}
+                            onclick={() => formAction.show(res)}
+                            >
+                                <td class="text-center text-bold"> {i + 1} </td>
+                                <td> {res.nama} </td>
+                                <td class="text-end"> {res.pinjam_lama ? viewRupiah(res.pinjam_lama) : '-'} </td>
+                                <td class="text-end"> {res.pinjam_baru ? viewRupiah(res.pinjam_baru) : '-'} </td>
+                                <td class="text-end"> {res.pinjam_total ? viewRupiah(res.pinjam_total) : '-'} </td>
+                                <td class="text-end"> {res.jasa ? viewRupiah(res.jasa) : '-'} </td>
+                                <td class="text-end"> {res?.pinjam_and_jasa ? viewRupiah(res.pinjam_and_jasa) : '-'} </td>
+                                <td class="text-end"> {res.jumlah_bayar ? viewRupiah(res.jumlah_bayar) : '-'} </td>
+                                <th class="text-end"> 
+                                    {#if res.sisa_pinjam > 0}
+                                    - {viewRupiah(res.sisa_pinjam)}
+                                    {:else if res.pinjam_total > 0}
+                                        LUNAS
+                                    {:else}
+                                        -
+                                    {/if} 
+                                </th>
+                            </tr>
+                            {/each}
+
+                            {#if temp_data_pinjam.data.length}
+                            <tr>
+                                <th class="text-end" colspan="2"> JUMLAH </th>
+                                <th class="text-end"> {temp_data_pinjam.sum.pinjam_lama ? viewRupiah(temp_data_pinjam.sum.pinjam_lama) : '-'} </th>
+                                <th class="text-end"> {temp_data_pinjam.sum.pinjam_baru ? viewRupiah(temp_data_pinjam.sum.pinjam_baru)  : '-'} </th>
+                                <th class="text-end"> {temp_data_pinjam.sum.pinjam_total ? viewRupiah(temp_data_pinjam.sum.pinjam_total)  : '-'} </th>
+                                <th class="text-end"> {temp_data_pinjam.sum.jasa ? viewRupiah(temp_data_pinjam.sum.jasa) : '-'} </th>
+                                <th class="text-end"> {temp_data_pinjam.sum.pinjam_and_jasa ? viewRupiah(temp_data_pinjam.sum.pinjam_and_jasa) : '-'} </th>
+                                <th class="text-end"> {temp_data_pinjam.sum.jumlah_bayar ? viewRupiah(temp_data_pinjam.sum.jumlah_bayar) : '-'} </th>
+                                <th class="text-end"> 
+                                    {
+                                        temp_data_pinjam.sum?.sisa_pinjam > 0
+                                            ? '- ' + viewRupiah(temp_data_pinjam.sum.sisa_pinjam)
+                                            : '-'
+                                    } 
+                                </th>
+                            </tr>
+                            {:else}
+                            <tr>
+                                <th class="text-center" colSpan="9"> Tidak ada data </th>
+                            </tr>
+                            {/if}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{#if modalForm.isVisible && _isAdmin}
+<ModalFormPeriode getPeriode={getPeriode} />
+{/if}
+
+{#if formAction.isVisible && _isAdmin}
+<FormAction getDataPinjam={getDataPinjam} />
+{/if}
+
+{#if printPDF.isVisible && _isAdmin}
+<PrintPdf dt_periode={data_periode} dt_laporan={temp_data_pinjam} />
+{/if}
+
+<style>
+	.table-container {
+        --color-table: #77B254;
+
+        background-color: color-mix(in srgb, var(--color-table), white 50%);
+        padding: var(--cel-gap);
+        /* padding-bottom: 50px; */
+        position: relative;
+        overflow-x: auto;
+
+        > .table-title { 
+            display: flex;
+            justify-content: space-between;
+            /* padding: var(--cel-gap);  */
+            font-weight: bold;
+
+            > .toggle-filter {
+                font-weight: 400;
+                display: flex;
+                column-gap: 10px;
+                
+                input {min-height: 0; width: 24px !important; height: 24px !important; margin: 0; padding: 0;}
+            }
+        }
+
+        > .table-body {
+            > table {   
+                width: 100%;
+                border: 1px solid black;
+                border-collapse: collapse;
+                th, td {
+                    padding: 2px;
+                    vertical-align: text-top;
+                    border: 1px solid black;
+                }
+    
+                thead > tr {
+                    background-color: var(--color-table);
+                }
+        
+                > tbody > tr {
+					background-color: color-mix(in srgb, var(--color-table), white 50%);
+                    transition: background-color 0.2s ease;
+        
+                    &:nth-child(even) {
+                        background-color: color-mix(in srgb, var(--color-table), white 25%);
+                    }
+        
+                    &:hover {
+                        background-color: color-mix(in srgb, var(--color-table), white 70%);
+                    }
+
+                    &.sisa_pinjam {
+                        color: #E52020;
+                        font-weight: 500;
+                    }
+
+                    &.bayar {
+                        color: #2E5077;
+                        font-weight: 500;
+                    }
+                }
+            }
+        }
+
+        &.detail {
+            --color-table: white;
+        }
+    }
+</style>

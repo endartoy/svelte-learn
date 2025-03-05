@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { fade } from "svelte/transition";
 
 	import { alertStore } from "$lib/stores/alertStore";
 	import { loadingStore } from "$lib/stores/loadingStore";
@@ -39,7 +40,7 @@
 <div class="container">
     <div class="row">
         {#each users as user}
-            <div class="col-4 md:col-2 lg:col-1">
+            <div class="col-4 sm:col-2 md:col-2 lg:col-1" transition:fade>
                 <UserCard user={user} getUsers={getUsers} />
             </div> 
         {/each}

@@ -5,12 +5,15 @@
 
 {#if $alertStore.length > 0}
 <div class="alert-space" transition:fade={{duration:100}}>
-    {#each $alertStore as alert}
+    {#each $alertStore as alert (alert.id)}
     <div 
         role="alert"
         aria-live="assertive"
         class='alert-container {alert?.type}'
         transition:fade={{duration:300}}
+        onfocus={() => {}}
+        onmouseover={() => alertStore.pauseHide(alert?.id)}
+        onmouseleave={() => alertStore.resumeHide(alert?.id)}
     >
         <button onclick={() => alertStore.hide(alert?.id)} class="close" aria-label="close"></button>
         <p> {alert?.message} </p>
