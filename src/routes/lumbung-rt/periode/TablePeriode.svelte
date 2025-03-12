@@ -2,6 +2,7 @@
 	let { tb_periode } = $props();
 	import { dateOption } from "$lib/tools";
 	import { fade } from "svelte/transition";
+    import { goto } from "$app/navigation";
 </script>
 
 <div class="table-container">
@@ -22,17 +23,18 @@
 			<tbody>
 				{#each tb_periode as res, i}
 				<tr in:fade>
-					<td class="text-center text-bold"> {i + 1} </td>
-					<td> {res?.nama_periode} </td>
-                    <td class="text-center"> {res?.jasa} </td>
-					<td class="text-center"> 
-                        {new Date(res?.tgl_pinjam).toLocaleDateString('id-ID', dateOption.duadigit)} 
+					<td class="text-center text-bold sm-hide"> {i + 1} </td>
+					<td class="sm-hide"> {res?.nama_periode} </td>
+                    <td class="text-center sm-hide"> {res?.jasa * 100} % </td>
+					<td class="sm-hide"> 
+                        {new Date(res?.tgl_pinjam).toLocaleDateString('id-ID', dateOption.dateForKasList)} 
                     </td>
-					<td class="text-center"> 
-                        {res?.tgl_bayar ? new Date(res?.tgl_bayar).toLocaleDateString('id-ID', dateOption.duadigit) : '-'} 
+					<td class="sm-hide"> 
+                        {res?.tgl_bayar ? new Date(res?.tgl_bayar).toLocaleDateString('id-ID', dateOption.dateForKasList) : '-'} 
                     </td>
-                    <td class="text-center" >
-                        <a href="./periode/{res?.id}" aria-label="laporan per periode" >
+                    <td data-label={`${i + 1}. PERIODE ${res.nama_periode}`} class="text-center" onclick={() => goto(`./periode/${res?.id}`)} >
+                        <!-- svelte-ignore a11y_invalid_attribute -->
+                        <a href="#" aria-label="laporan per periode" >
                             <i class="fa-solid fa-arrow-right"></i>
                         </a>
                     </td>
@@ -49,9 +51,11 @@
 
 <style>
 	.table-container {
-        --color-table: #B1C29E;
+        --color-table: #FADA7A;
 
         background-color: color-mix(in srgb, var(--color-table), white 50%);
+        border: 2px solid var(--color-table);
+        border-radius: 5px;
         height: 100%;
         padding: var(--cel-gap);
         /* padding-bottom: 50px; */
@@ -80,17 +84,54 @@
                 }
         
                 tbody > tr {
-					background-color: color-mix(in srgb, var(--color-table), white 50%);
+					background-color: color-mix(in srgb, var(--color-table), white 80%);
                     transition: background-color 0.2s ease;
         
                     &:nth-child(even) {
-                        background-color: color-mix(in srgb, var(--color-table), white 25%);
+                        background-color: color-mix(in srgb, var(--color-table), white 45%);
                     }
-        
+
                     &:hover {
-                        background-color: color-mix(in srgb, var(--color-table), white 70%);
+                        background-color: var(--color-table);
                     }
                 }
+            }
+        }
+
+        @media (max-width: 600px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+                width: 100%;
+                border: none !important;
+            }
+            
+            thead {
+                display: none; /* Hide table headers */
+            }
+
+            tr {
+                margin-bottom: 10px;
+                border: 1.5px solid black !important;
+            }
+
+            td {
+                display: flex;
+                justify-content: space-between;
+                padding: 6px !important;
+                border-bottom: 1px solid black !important;
+
+                &.sm-hide { display: none; }
+            }
+
+            td::before {
+                content: attr(data-label);
+                font-weight: 500;
+                text-transform: capitalize;
+                padding-right: 5px;
+            }
+
+            td:last-child {
+                border: none !important;
             }
         }
     }

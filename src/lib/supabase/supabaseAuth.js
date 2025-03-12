@@ -8,7 +8,7 @@ const supabaseSignIn = async(email) => {
         const { data, error } = await supabase.auth.signInWithOtp({
             email: email,
             options: {
-                emailRedirectTo: `${page.url.origin}/lumbung-rt`
+                emailRedirectTo: import.meta.env.VITE_SUPABASE_REDIRECT
             }
         })
 

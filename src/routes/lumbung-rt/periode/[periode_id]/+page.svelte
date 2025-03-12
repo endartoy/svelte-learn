@@ -58,9 +58,16 @@
     }
 
     // Check is admin or not
-    const _isAdmin = $derived(
+    let _isAdmin = $derived(
         ['admin', 'superadmin'].includes($userSupabaseStore?.user?.user_role)
     )
+
+    // Show Action
+    const showAction = (res) => {
+        if (_isAdmin) {
+            formAction.show(res)
+        }
+    }
 
     onMount(() => {
         if (!periode_id) {
@@ -117,8 +124,8 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>Catatan</td>
-                                <td>{data_periode?.ket?.replace(/\\n/g, '\n')}</td>
+                                <td>Keterangan</td>
+                                <td>{data_periode?.ket ? data_periode.ket.replace(/\\n/g, '\n') : '-'}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -129,7 +136,7 @@
 
     <div class="row gap-0">
         <div class="col-4">
-            <div class="table-container">
+            <div class="table-container list">
                 <div class="table-title">
                     <span> Daftar Pinjaman </span>
 
@@ -161,17 +168,17 @@
                             in:fade
                             class:sisa_pinjam={res.sisa_pinjam > 0}
                             class:bayar={res.jumlah_bayar > 0 & res.sisa_pinjam > 0}
-                            onclick={() => formAction.show(res)}
+                            onclick={() => showAction(res)}
                             >
-                                <td class="text-center text-bold"> {i + 1} </td>
-                                <td> {res.nama} </td>
-                                <td class="text-end"> {res.pinjam_lama ? viewRupiah(res.pinjam_lama) : '-'} </td>
-                                <td class="text-end"> {res.pinjam_baru ? viewRupiah(res.pinjam_baru) : '-'} </td>
-                                <td class="text-end"> {res.pinjam_total ? viewRupiah(res.pinjam_total) : '-'} </td>
-                                <td class="text-end"> {res.jasa ? viewRupiah(res.jasa) : '-'} </td>
-                                <td class="text-end"> {res?.pinjam_and_jasa ? viewRupiah(res.pinjam_and_jasa) : '-'} </td>
-                                <td class="text-end"> {res.jumlah_bayar ? viewRupiah(res.jumlah_bayar) : '-'} </td>
-                                <th class="text-end"> 
+                                <td class="text-center text-bold nomor"> {i + 1} </td>
+                                <td data-label={`${i + 1}. `} class="nama"> {res.nama} </td>
+                                <td data-label="Pinj. Lama" class="text-end"> {res.pinjam_lama ? viewRupiah(res.pinjam_lama) : '-'} </td>
+                                <td data-label="Pinj. Baru" class="text-end"> {res.pinjam_baru ? viewRupiah(res.pinjam_baru) : '-'} </td>
+                                <td data-label="Total Pinj." class="text-end"> {res.pinjam_total ? viewRupiah(res.pinjam_total) : '-'} </td>
+                                <td data-label="Jasa" class="text-end"> {res.jasa ? viewRupiah(res.jasa) : '-'} </td>
+                                <td data-label="Pinj. + Jasa" class="text-end"> {res?.pinjam_and_jasa ? viewRupiah(res.pinjam_and_jasa) : '-'} </td>
+                                <td data-label="Jumlah Bayar" class="text-end"> {res.jumlah_bayar ? viewRupiah(res.jumlah_bayar) : '-'} </td>
+                                <th data-label="Keterangan" class="text-end"> 
                                     {#if res.sisa_pinjam > 0}
                                     - {viewRupiah(res.sisa_pinjam)}
                                     {:else if res.pinjam_total > 0}
@@ -185,14 +192,14 @@
 
                             {#if temp_data_pinjam.data.length}
                             <tr>
-                                <th class="text-end" colspan="2"> JUMLAH </th>
-                                <th class="text-end"> {temp_data_pinjam.sum.pinjam_lama ? viewRupiah(temp_data_pinjam.sum.pinjam_lama) : '-'} </th>
-                                <th class="text-end"> {temp_data_pinjam.sum.pinjam_baru ? viewRupiah(temp_data_pinjam.sum.pinjam_baru)  : '-'} </th>
-                                <th class="text-end"> {temp_data_pinjam.sum.pinjam_total ? viewRupiah(temp_data_pinjam.sum.pinjam_total)  : '-'} </th>
-                                <th class="text-end"> {temp_data_pinjam.sum.jasa ? viewRupiah(temp_data_pinjam.sum.jasa) : '-'} </th>
-                                <th class="text-end"> {temp_data_pinjam.sum.pinjam_and_jasa ? viewRupiah(temp_data_pinjam.sum.pinjam_and_jasa) : '-'} </th>
-                                <th class="text-end"> {temp_data_pinjam.sum.jumlah_bayar ? viewRupiah(temp_data_pinjam.sum.jumlah_bayar) : '-'} </th>
-                                <th class="text-end"> 
+                                <th class="text-end nama" colspan="2"> JUMLAH TOTAL </th>
+                                <th data-label="Pinj. Lama" class="text-end"> {temp_data_pinjam.sum.pinjam_lama ? viewRupiah(temp_data_pinjam.sum.pinjam_lama) : '-'} </th>
+                                <th data-label="Pinj. Baru" class="text-end"> {temp_data_pinjam.sum.pinjam_baru ? viewRupiah(temp_data_pinjam.sum.pinjam_baru)  : '-'} </th>
+                                <th data-label="Total Pinj." class="text-end"> {temp_data_pinjam.sum.pinjam_total ? viewRupiah(temp_data_pinjam.sum.pinjam_total)  : '-'} </th>
+                                <th data-label="Jasa" class="text-end"> {temp_data_pinjam.sum.jasa ? viewRupiah(temp_data_pinjam.sum.jasa) : '-'} </th>
+                                <th data-label="Pinj. + Jasa" class="text-end"> {temp_data_pinjam.sum.pinjam_and_jasa ? viewRupiah(temp_data_pinjam.sum.pinjam_and_jasa) : '-'} </th>
+                                <th data-label="Pembayaran" class="text-end"> {temp_data_pinjam.sum.jumlah_bayar ? viewRupiah(temp_data_pinjam.sum.jumlah_bayar) : '-'} </th>
+                                <th data-label="Keterangan" class="text-end"> 
                                     {
                                         temp_data_pinjam.sum?.sisa_pinjam > 0
                                             ? '- ' + viewRupiah(temp_data_pinjam.sum.sisa_pinjam)
@@ -202,7 +209,7 @@
                             </tr>
                             {:else}
                             <tr>
-                                <th class="text-center" colSpan="9"> Tidak ada data </th>
+                                <th class="error text-center" colSpan="9"> Tidak ada data </th>
                             </tr>
                             {/if}
                         </tbody>
@@ -227,9 +234,11 @@
 
 <style>
 	.table-container {
-        --color-table: #77B254;
+        --color-table: #FADA7A;
 
         background-color: color-mix(in srgb, var(--color-table), white 50%);
+        border: 2px solid var(--color-table);
+        border-radius: 5px;
         padding: var(--cel-gap);
         /* padding-bottom: 50px; */
         position: relative;
@@ -266,15 +275,15 @@
                 }
         
                 > tbody > tr {
-					background-color: color-mix(in srgb, var(--color-table), white 50%);
+					background-color: color-mix(in srgb, var(--color-table), white 80%);
                     transition: background-color 0.2s ease;
         
                     &:nth-child(even) {
-                        background-color: color-mix(in srgb, var(--color-table), white 25%);
+                        background-color: color-mix(in srgb, var(--color-table), white 45%);
                     }
-        
+
                     &:hover {
-                        background-color: color-mix(in srgb, var(--color-table), white 70%);
+                        background-color: var(--color-table);
                     }
 
                     &.sisa_pinjam {
@@ -292,6 +301,52 @@
 
         &.detail {
             --color-table: white;
+        }
+
+        &.list {
+            @media (max-width: 900px) {
+                table, thead, tbody, th, td, tr {
+                    display: block;
+                    width: 100%;
+                    border: none !important;
+                }
+                
+                thead {
+                    display: none; /* Hide table headers */
+                }
+
+                tr {
+                    margin-bottom: 10px;
+                    border: 1.5px solid black !important;
+                }
+
+                td, th {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 6px !important;
+                    border-bottom: 1px solid black !important;
+
+                    &.nomor { display: none; }
+                    &.nama, &.error { 
+                        justify-content: center; 
+                        font-weight: 500;
+                        text-transform: capitalize;
+                    }
+
+                }
+
+                td::before, th::before {
+                    content: attr(data-label);
+                    font-weight: 500;
+                    text-transform: capitalize;
+                    padding-right: 5px;
+                    text-align: left;
+                }
+
+                td:last-child, th:last-child {
+                    border: none !important;
+                }
+            }
         }
     }
 </style>

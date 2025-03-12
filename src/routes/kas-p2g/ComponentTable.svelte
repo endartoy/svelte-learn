@@ -24,10 +24,11 @@
 				<tr transition:fade
 					onclick={() => res.id ? modalForm.show(res) : buttonFilter()} 
 				>
-					<td class="text-center text-bold"> {i+1} </td>
-					<td> {res?.tanggal.toLocaleDateString('id-ID', dateOption.duadigit)} </td>
-                    <td style="white-space: pre-line;">{res?.ket.replace(/\\n/g, '\n')}</td>
-					<td class="text-end"> {viewRupiah(res?.jumlah)} </td>
+					<td class="text-center text-bold nomor"> {i+1} </td>
+					<td class="lg-tgl" > {res?.tanggal.toLocaleDateString('id-ID', dateOption.duadigit)} </td>
+					<td data-label={`${i + 1}. `} class="sm-tgl" > {res?.tanggal.toLocaleDateString('id-ID', dateOption.dateForKasList)} </td>
+                    <td class="ket" style="white-space: pre-line;">{res?.ket.replace(/\\n/g, '\n')}</td>
+					<td class="text-end jumlah"> {viewRupiah(res?.jumlah)} </td>
 				</tr>
                 {:else}
                 <tr>
@@ -74,6 +75,8 @@
                     padding: 2px;
                     vertical-align: text-top;
                     border: 1px solid black;
+
+                    &.sm-tgl { display: none; }
                 }
     
                 thead > tr {
@@ -81,15 +84,15 @@
                 }
         
                 tbody > tr {
-					background-color: color-mix(in srgb, var(--color-table), white 50%);
+					background-color: color-mix(in srgb, var(--color-table), white 80%);
                     transition: background-color 0.2s ease;
         
                     &:nth-child(even) {
-                        background-color: color-mix(in srgb, var(--color-table), white 25%);
+                        background-color: color-mix(in srgb, var(--color-table), white 45%);
                     }
         
                     &:hover {
-                        background-color: color-mix(in srgb, var(--color-table), white 70%);
+                        background-color: var(--color-table);
                     }
                 }
             }
@@ -113,6 +116,51 @@
 
         &.kredit {
             --color-table: var(--kredit);
+        }
+
+        container-type: inline-size; /* Makes it responsive to width */
+        
+        @container (max-width: 500px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+                width: 100%;
+                border: none !important;
+            }
+            
+            thead {
+                display: none; /* Hide table headers */
+            }
+
+            tr {
+                margin-bottom: 10px;
+                border: 1.5px solid black !important;
+            }
+
+            td {
+                display: flex;
+                padding: 6px !important;
+                border-bottom: 1px solid black !important;
+
+                &.nomor, &.lg-tgl { display: none; }
+                &.sm-tgl {
+                    display: flex !important; 
+                    justify-content: space-between; 
+                    font-weight: bold;
+                    text-transform: capitalize;
+                }
+                &.jumlah { justify-content: end; font-weight: 500; }
+            }
+
+            td::before, th::before {
+                content: attr(data-label);
+                font-weight: bold;
+                text-transform: capitalize;
+                padding-right: 5px;
+            }
+
+            td:last-child {
+                border: none !important;
+            }
         }
     }
 </style>

@@ -76,8 +76,8 @@
                     <table>
                         <tbody>
                             <tr>
-                                <td style="width: 90px;">Catatan</td>
-                                <td>{data_anggota?.ket?.replace(/\\n/g, '\n')}</td>
+                                <td style="width: 90px;">Keterangan</td>
+                                <td>{data_anggota?.ket ? data_anggota.ket.replace(/\\n/g, '\n') : '-'}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -86,9 +86,9 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row gap-0">
         <div class="col-4">
-            <div class="table-container">
+            <div class="table-container list">
                 <span class="table-title">Catatan Pinjaman dan Pembayaran</span>
             
                 <div class="table-body">
@@ -109,15 +109,15 @@
                         <tbody>
                             {#each data_pinjam?.data as res, i}
                             <tr in:fade>
-                                <td class="text-center text-bold"> {i + 1} </td>
-                                <td> {res.nama_periode} </td>
-                                <td class="text-end"> {res.pinjam_lama ? viewRupiah(res.pinjam_lama) : '-'} </td>
-                                <td class="text-end"> {res.pinjam_baru ? viewRupiah(res.pinjam_baru) : '-'} </td>
-                                <td class="text-end"> {res.pinjam_total ? viewRupiah(res.pinjam_total) : '-'} </td>
-                                <td class="text-end"> {res.jasa ? viewRupiah(res.jasa) : '-'} </td>
-                                <td class="text-end"> {res?.pinjam_and_jasa ? viewRupiah(res.pinjam_and_jasa) : '-'} </td>
-                                <td class="text-end"> {res.jumlah_bayar ? viewRupiah(res.jumlah_bayar) : '-'} </td>
-                                <th class="text-end"> 
+                                <td class="text-center text-bold nomor"> {i + 1} </td>
+                                <td data-label={`${i + 1}. Periode`} class="nama"> {res.nama_periode} </td>
+                                <td data-label="Pinj. Lama" class="text-end"> {res.pinjam_lama ? viewRupiah(res.pinjam_lama) : '-'} </td>
+                                <td data-label="Pinj. Baru" class="text-end"> {res.pinjam_baru ? viewRupiah(res.pinjam_baru) : '-'} </td>
+                                <td data-label="Total Pinj." class="text-end"> {res.pinjam_total ? viewRupiah(res.pinjam_total) : '-'} </td>
+                                <td data-label="Jasa" class="text-end"> {res.jasa ? viewRupiah(res.jasa) : '-'} </td>
+                                <td data-label="Pinj. + Jasa" class="text-end"> {res?.pinjam_and_jasa ? viewRupiah(res.pinjam_and_jasa) : '-'} </td>
+                                <td data-label="Jumlah Bayar" class="text-end"> {res.jumlah_bayar ? viewRupiah(res.jumlah_bayar) : '-'} </td>
+                                <th data-label="Keterangan" class="text-end"> 
                                     {#if res.sisa_pinjam > 0}
                                     - {viewRupiah(res.sisa_pinjam)}
                                     {:else if res.pinjam_total > 0}
@@ -129,7 +129,7 @@
                             </tr>
                             {:else}
                             <tr>
-                                <th class="text-center" colSpan="9"> Tidak ada data </th>
+                                <th class="error text-center" colSpan="9"> Tidak ada data </th>
                             </tr>
                             {/each}
                         </tbody>
@@ -146,9 +146,11 @@
 
 <style>
 	.table-container {
-        --color-table: #77B254;
+        --color-table: #FADA7A;
 
         background-color: color-mix(in srgb, var(--color-table), white 50%);
+        border: 2px solid var(--color-table);
+        border-radius: 5px;
         height: 100%;
         padding: var(--cel-gap);
         /* padding-bottom: 50px; */
@@ -177,16 +179,16 @@
                     background-color: var(--color-table);
                 }
         
-                > tbody > tr {
-					background-color: color-mix(in srgb, var(--color-table), white 50%);
+                tbody > tr {
+					background-color: color-mix(in srgb, var(--color-table), white 80%);
                     transition: background-color 0.2s ease;
         
                     &:nth-child(even) {
-                        background-color: color-mix(in srgb, var(--color-table), white 25%);
+                        background-color: color-mix(in srgb, var(--color-table), white 45%);
                     }
-        
+
                     &:hover {
-                        background-color: color-mix(in srgb, var(--color-table), white 70%);
+                        background-color: var(--color-table);
                     }
                 }
             }
@@ -194,6 +196,50 @@
 
         &.detail {
             --color-table: white;
+        }
+
+        &.list {
+            @media (max-width: 900px) {
+                table, thead, tbody, th, td, tr {
+                    display: block;
+                    width: 100%;
+                    border: none !important;
+                }
+                
+                thead {
+                    display: none; /* Hide table headers */
+                }
+
+                tr {
+                    margin-bottom: 10px;
+                    border: 1.5px solid black !important;
+                }
+
+                td, th {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 6px !important;
+                    border-bottom: 1px solid black !important;
+
+                    &.nomor { display: none; }
+                    &.nama, &.error { 
+                        justify-content: center; 
+                        font-weight: 500;
+                        text-transform: capitalize;
+                    }
+                }
+
+                td::before, th::before {
+                    content: attr(data-label);
+                    font-weight: 500;
+                    text-transform: capitalize;
+                    padding-right: 5px;
+                }
+
+                td:last-child, th:last-child {
+                    border: none !important;
+                }
+            }
         }
     }
 </style>

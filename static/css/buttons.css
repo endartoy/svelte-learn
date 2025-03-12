@@ -64,4 +64,6 @@
         width: 38px;
         height: 38px;
     }
+
+    &.transparent { background-color: transparent; }
 }

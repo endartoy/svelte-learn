@@ -15,8 +15,9 @@
     import { userSupabaseStore } from "$lib/stores/userStores";
 
     // local import
-	import ComponentAlert from "./ComponentAlert.svelte";
     import ComponentLogin, { isShowLogin, showLogin } from "./ComponentLogin.svelte";
+	import { disableBodyScroll } from "$lib/tools";
+	import ComponentAlert from "../ComponentAlert.svelte";
 
     const signOutSupabase = () => {
         const _confirm = confirm('Keluar dari aplikasi ?')
@@ -55,6 +56,11 @@
     }
 
     onMount(() => {
+        const params = new URLSearchParams(page.url.hash.replace('#', ''))
+        if (params.get('error')) {
+            alertStore.show(`Error: ${params.get('error_description')}`, 'danger')
+        }
+
         let unsubscribe
         unsubscribe = getAuthChange()
 
@@ -85,65 +91,66 @@
     let _currentPage = $derived(_userLink.find(val => val.url === page.url.pathname))
     
     let isSideBar = $state(false)
-    // svelte-ignore non_reactive_update
-    let navElement
-    let fnMainClick = (event) => {
-        if (navElement && !navElement.contains(event.target)) {
-            isSideBar = false
-        }
+    const openSidebar = (val = true) => {
+        isSideBar = val
+        disableBodyScroll(val)
     }
-
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-<main onclick={fnMainClick}>
+<main>
     {#if isSideBar}
-    <nav bind:this={navElement} class="side-bar" transition:fly={{ x: -300, duration: 300 }} > 
-        <div class="nav-header">
-            <span class="title"> LUMBUNG RT </span>
+    <div class="modal-container transparent">
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div onclick={() => openSidebar(false)} class="modal-backdrop"></div>
 
-            <ul onclick={() => isSideBar = false} class="nav-link">
-                <li class:is-active={page.url.pathname.split('/').includes('anggota', 2)}>
-                    <a href="/lumbung-rt/anggota" > ANGGOTA </a>
-                </li>
-                <li class:is-active={page.url.pathname.split('/').includes('periode', 2)}>
-                    <a href="/lumbung-rt/periode" > PERIODE </a>
-                </li>
-                
-                {#if $userSupabaseStore?.user?.user_role === 'superadmin'}
-                <li class="sp-link" class:is-active={page.url.pathname.split('/').includes('riwayat')}> 
-                    <a href="/lumbung-rt/riwayat" > RIWAYAT DATA </a>
-                </li>
-                {/if}
-            </ul>
-        </div>
-        
-        <div class="nav-footer">
-            <div class="user">
-                <img src="/p2g.png" alt="Avatar" class="avatar" />
+        <nav transition:fly={{ x: -300, duration: 300 }} > 
+            <div class="nav-header">
+                <span class="title"> LUMBUNG RT </span>
 
-                <div class="user-detail">
-                    <span class="user-name"> {$userSupabaseStore?.user ? $userSupabaseStore.user.user_role : 'Hello'} </span>
-                    <span class="user-email"> {$userSupabaseStore?.user ? $userSupabaseStore.user.email : 'Selamat datang'} </span>
-                </div>
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+                <ul onclick={() => openSidebar(false)} class="nav-link">
+                    <li class:is-active={page.url.pathname.split('/').includes('anggota', 2)}>
+                        <a href="/lumbung-rt/anggota" > ANGGOTA </a>
+                    </li>
+                    <li class:is-active={page.url.pathname.split('/').includes('periode', 2)}>
+                        <a href="/lumbung-rt/periode" > PERIODE </a>
+                    </li>
+                    
+                    {#if $userSupabaseStore?.user?.user_role === 'superadmin'}
+                    <li class="sp-link" class:is-active={page.url.pathname.split('/').includes('riwayat')}> 
+                        <a href="/lumbung-rt/riwayat" > RIWAYAT DATA </a>
+                    </li>
+                    {/if}
+                </ul>
             </div>
+            
+            <div class="nav-footer">
+                <div class="user">
+                    <img src="/p2g.png" alt="Avatar" class="avatar" />
 
-            <button onclick={() => {isSideBar = false; $userSupabaseStore?.user ? signOutSupabase() : showLogin()}} class="button small" aria-label="logout">
-                <span class="icon"><i class="fa-solid fa-right-to-bracket"></i></span>
-            </button>
-        </div>
-    </nav>
+                    <div class="user-detail">
+                        <span class="user-name"> {$userSupabaseStore?.user ? $userSupabaseStore.user.user_role : 'Hello'} </span>
+                        <span class="user-email"> {$userSupabaseStore?.user ? $userSupabaseStore.user.email : 'Selamat datang'} </span>
+                    </div>
+                </div>
+
+                <button onclick={() => {isSideBar = false; $userSupabaseStore?.user ? signOutSupabase() : showLogin()}} class="button small" aria-label="logout">
+                    <span class="icon"><i class="fa-solid fa-right-to-bracket"></i></span>
+                </button>
+            </div>
+        </nav>
+    </div>
     {/if}
 
     <div class="head">
         <div>
-            <button class="button primary bt-sidebar" onclick={(e) => {e.stopPropagation(); isSideBar = !isSideBar}} aria-label="side bar" >
+            <button class="button primary bt-sidebar" onclick={(e) => {e.stopPropagation(); openSidebar(true)}} aria-label="side bar" >
                 <span><i class="fa-solid fa-bars"></i></span>
             </button>
-            <span class="title">
-                LUMBUNG RT
+            <span class="title"> 
+                {_currentPage?.title ? _currentPage.title : 'LUMBUNG RT'}
             </span>
         </div>
 
@@ -205,7 +212,7 @@
             padding-top: 50px;
         }
 
-        > .side-bar {
+        nav {
             /* Nav Variabel */
             --nav-bg: #FADA7A;
             --nav-link: color-mix(in srgb, var(--nav-bg) 50%, white 50%);

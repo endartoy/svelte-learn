@@ -61,8 +61,12 @@
         width: var(--form-width);
         display: flex;
         flex-direction: column;
-        /* column-gap: 5px; */
         row-gap: 5px;
+
+        --bg-color: #FADA7A;
+        background-color: color-mix(in srgb, var(--bg-color) 80%, white);
+        border-radius: 5px;
+        padding: 1em;
     }
 </style>
 

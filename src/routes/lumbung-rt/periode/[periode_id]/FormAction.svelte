@@ -41,7 +41,7 @@
 </script>
 
 <script>
-    import { fade } from "svelte/transition";
+    import { fade, fly } from "svelte/transition";
     import { disableBodyScroll, dateOption, formatRupiah, viewRupiah, formatInterger } from "$lib/tools";
 	import { alertStore } from "$lib/stores/alertStore";
 	import { loadingStore } from "$lib/stores/loadingStore";
@@ -86,7 +86,7 @@
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div class="modal-backdrop" onclick={() => formAction.hide()}></div>
 
-    <div class="modal-content">
+    <div class="modal-content" transition:fly={{delay: 100}}>
         <div class='form' >
             <div class="form-header">
                 <span class="header-title"> 
@@ -141,12 +141,12 @@
                                 <th>:</th>
                                 <th class="text-end">{formData?.pinjam_total}</th>
                             </tr>
-                            <tr>
+                            <tr onclick={() => formData.bayar = formData?.jasa}>
                                 <th class="text-start">Jasa</th>
                                 <th>:</th>
                                 <th class="text-end">{formData?.jasa}</th>
                             </tr>
-                            <tr>
+                            <tr onclick={() => formData.bayar = formData?.pinjam_and_jasa}>
                                 <th class="text-start">Pinj. + Jasa</th>
                                 <th>:</th>
                                 <th class="text-end">{formData?.pinjam_and_jasa}</th>
@@ -196,6 +196,8 @@
     .form {
         --bg-color: #FADA7A;
         background-color: var(--bg-color);
+        border-radius: 5px;
+        
         .form-header, .action-button {
             background-color: color-mix(in srgb, var(--bg-color), white 30%);
         }
@@ -243,14 +245,34 @@
 
         .table-info {
             width: 100%;
-            border: 1px solid black;
-            /* border-collapse: collapse; */
+            border-collapse: collapse;
+
+            th { padding: 4px; }
+            tr {
+                background-color: color-mix(in srgb, var(--bg-color), white 60%);
+                &:nth-child(even) {
+                    background-color: color-mix(in srgb, var(--bg-color), white 90%);
+                }
+            }
         }
 
         -ms-overflow-style: none; /* IE 10+ */
         scrollbar-width: none; /* Firefox */
         &::-webkit-scrollbar {
             display: none; /* Hide scrollbar */
+        }
+    }
+
+    /* Custom Modal Style */
+    @media (max-width: 600px) {
+        .form { 
+            min-height: calc(100vh - 100vh / 3); 
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .modal-container {
+            justify-content: end;
         }
     }
 </style>

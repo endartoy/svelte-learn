@@ -3,18 +3,19 @@
     let { children } = $props()
 	import { page } from "$app/state";
     import { onMount } from "svelte";
+	import { fade, fly } from 'svelte/transition';
 
     // Alert and Loading
     import { alertStore } from "$lib/stores/alertStore.js";
     import { loadingStore } from "$lib/stores/loadingStore.js";
-	import { fade, fly } from 'svelte/transition';
+	import { disableBodyScroll } from "$lib/tools";
 
     // User Auth
     import { authStateListener, fnSignIn, fnSignOut } from "$lib/firebase.js";
     import { userStore } from "$lib/stores/userStores";
 
     // local import
-	import ComponentAlert from "./ComponentAlert.svelte";
+	import ComponentAlert from "../ComponentAlert.svelte";
 
     const signIn = async() => {
         loadingStore.show()
@@ -69,61 +70,63 @@
     
     // SideBar
     let isSideBar = $state(false)
-    // svelte-ignore non_reactive_update
-    let navElement
-    let fnMainClick = (event) => {
-        if (navElement && !navElement.contains(event.target)) {
-            isSideBar = false
-        }
+    const openSidebar = (val = true) => {
+        isSideBar = val
+        disableBodyScroll(val)
     }
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-<main onclick={fnMainClick}>
+<main>
     {#if isSideBar}
-    <nav bind:this={navElement} class="side-bar" transition:fly={{ x: -300, duration: 300 }} > 
-        <div class="nav-header">
-            <span class="title"> KAS P2G </span>
+    <div class="modal-container transparent">
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div onclick={() => openSidebar(false)} class="modal-backdrop"></div>
 
-            <ul onclick={() => isSideBar = false} class="nav-link">
-                <li class:is-active={page.url.pathname === '/kas-p2g'}>
-                    <a href="/kas-p2g" > KAS P2G </a>
-                </li>
-
-                {#if $userStore?.role === 'superadmin'}
-                <li class="sp-link" class:is-active={page.url.pathname.split('/').includes('manage-user', 2)}>
-                    <a href="/kas-p2g/manage-user" > MANAGE USER </a>
-                </li>
-                {/if}
-            </ul>
-        </div>
-        
-        <div class="nav-footer">
-            <div class="user">
-                <img src={$userStore ? $userStore.photoURL : "/p2g.png"} alt="Avatar" class="avatar" />
-
-                <div class="user-detail">
-                    <span class="user-name"> {$userStore ? $userStore.displayName : 'Hello'} </span>
-                    <span class="user-email"> {$userStore ? $userStore.email : 'Selamat datang'} </span>
-                </div>
+        <nav transition:fly={{ x: -300, duration: 300 }} > 
+            <div class="nav-header">
+                <span class="title"> KAS P2G </span>
+    
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+                <ul onclick={() => openSidebar(false)} class="nav-link">
+                    <li class:is-active={page.url.pathname === '/kas-p2g'}>
+                        <a href="/kas-p2g" > KAS P2G </a>
+                    </li>
+    
+                    {#if $userStore?.role === 'superadmin'}
+                    <li class="sp-link" class:is-active={page.url.pathname.split('/').includes('manage-user', 2)}>
+                        <a href="/kas-p2g/manage-user" > MANAGE USER </a>
+                    </li>
+                    {/if}
+                </ul>
             </div>
-
-            <button onclick={() => {isSideBar = false; $userStore ? signOut() : signIn()}} class="button small" aria-label="logout">
-                <span class="icon"><i class="fa-solid fa-right-to-bracket"></i></span>
-            </button>
-        </div>
-    </nav>
+            
+            <div class="nav-footer">
+                <div class="user">
+                    <img src={$userStore ? $userStore.photoURL : "/p2g.png"} alt="Avatar" class="avatar" />
+    
+                    <div class="user-detail">
+                        <span class="user-name"> {$userStore ? $userStore.displayName : 'Hello'} </span>
+                        <span class="user-email"> {$userStore ? $userStore.email : 'Selamat datang'} </span>
+                    </div>
+                </div>
+    
+                <button onclick={() => {isSideBar = false; $userStore ? signOut() : signIn()}} class="button small" aria-label="logout">
+                    <span class="icon"><i class="fa-solid fa-right-to-bracket"></i></span>
+                </button>
+            </div>
+        </nav>
+    </div>
     {/if}
 
     <div class="head">
         <div>
-            <button class="button primary bt-sidebar" onclick={(e) => {e.stopPropagation(); isSideBar = !isSideBar}} aria-label="side bar" >
+            <button class="button primary bt-sidebar" onclick={(e) => {e.stopPropagation(); openSidebar(true)}} aria-label="side bar" >
                 <span><i class="fa-solid fa-bars"></i></span>
             </button>
             <span class="title">
-                KAS P2G
+                {_currentPage?.title ? _currentPage.title : 'KAS P2G'}
             </span>
         </div>
 
@@ -180,7 +183,7 @@
             padding-top: 50px;
         }
 
-        > .side-bar {
+        nav {
             /* Nav Variabel */
             --nav-bg: #1de9b6;
             --nav-link: color-mix(in srgb, var(--nav-bg) 50%, white 50%);

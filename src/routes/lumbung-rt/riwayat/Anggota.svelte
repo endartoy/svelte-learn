@@ -272,7 +272,7 @@
             bottom: 0;
             display: flex;
             gap: var(--cel-gap);
-            > button, a { flex: 1; }
+            > button { flex: 1; }
         }
 
         -ms-overflow-style: none; /* IE 10+ */
