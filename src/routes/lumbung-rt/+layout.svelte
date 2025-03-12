@@ -136,7 +136,7 @@
                     </div>
                 </div>
 
-                <button onclick={() => {isSideBar = false; $userSupabaseStore?.user ? signOutSupabase() : showLogin()}} class="button small" aria-label="logout">
+                <button onclick={() => { openSidebar(false); $userSupabaseStore?.user ? signOutSupabase() : showLogin()}} class="button small" aria-label="logout">
                     <span class="icon"><i class="fa-solid fa-right-to-bracket"></i></span>
                 </button>
             </div>

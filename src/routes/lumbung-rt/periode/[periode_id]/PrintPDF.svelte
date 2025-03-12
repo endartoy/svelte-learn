@@ -231,6 +231,15 @@
             });
         };
 
+        // Set tgl
+        const tgl_pinjam = dt_periode?.tgl_pinjam
+            ? new Date(dt_periode.tgl_pinjam)
+            : new Date()
+
+        const tgl_bayar = dt_periode?.tgl_bayar 
+            ? new Date(dt_periode.tgl_bayar)
+            : new Date()
+
         // 1. Add page title
         _setText(`FORM PEMBAYARAN PINJAMAN LUMBUNG RT 02 DK. GADEN\r\nPERIODE ${dt_periode?.nama_periode}`, 
             {halign: 'center', fontStyle: 'bold'}, 
@@ -238,8 +247,8 @@
         )
 
         // 2. Tgl Tutup Buku
-        _setText(`Tanggal Pinjam : ${new Date(dt_periode?.tgl_pinjam).toLocaleDateString('id-ID', dateOption.dateForPdf)}`)
-        _setText(`Tanggal Pembayaran : ${new Date(dt_periode?.tgl_bayar).toLocaleDateString('id-ID', dateOption.dateForPdf)}`,
+        _setText(`Tanggal Pinjam : ${tgl_pinjam.toLocaleDateString('id-ID', dateOption.dateForPdf)}`)
+        _setText(`Tanggal Pembayaran : ${tgl_bayar.toLocaleDateString('id-ID', dateOption.dateForPdf)}`,
             {}, doc.lastAutoTable.finalY, 0
         )
 
@@ -324,7 +333,7 @@
         const paraf = [
             [
                 { content: '', styles: { halign: 'center'} },
-                { content: new Date(dt_periode.tgl_bayar).toLocaleDateString("id-ID", dateOption.dateForParaf), styles: { halign: 'center'} },
+                { content: tgl_bayar.toLocaleDateString("id-ID", dateOption.dateForParaf), styles: { halign: 'center'} },
             ],
             [
                 { content: '', styles: { halign: 'center'} },
@@ -365,7 +374,7 @@
             );
 
             doc.text(
-                'Dibuat tanggal ' + new Date(dt_periode.tgl_bayar).toLocaleDateString('id-ID', dateOption.duadigit), 
+                'Dibuat tanggal ' + tgl_bayar.toLocaleDateString('id-ID', dateOption.duadigit), 
                 14, 
                 doc.internal.pageSize.getHeight() - 10, 
                 { align: 'left' }
@@ -419,15 +428,24 @@
             });
         };
 
+        // Set tgl
+        const tgl_pinjam = dt_periode?.tgl_pinjam
+            ? new Date(dt_periode.tgl_pinjam)
+            : new Date()
+
+        const tgl_bayar = dt_periode?.tgl_bayar 
+            ? new Date(dt_periode.tgl_bayar)
+            : new Date()
+
         // 1. Add page title
-        _setText(`LAPORAN LUMBUNG RT 02 DK. GADEN\r\nPERIODE ${dt_periode?.nama_periode}`, 
+        _setText(`LAPORAN PINJAMAN LUMBUNG RT 02 DK. GADEN\r\nPERIODE ${dt_periode?.nama_periode}`, 
             {halign: 'center', fontStyle: 'bold'}, 
             10, 0
         )
 
         // 2. Tgl Tutup Buku
-        _setText(`Tanggal Pinjam : ${new Date(dt_periode?.tgl_pinjam).toLocaleDateString('id-ID', dateOption.dateForPdf)}`)
-        _setText(`Tanggal Pembayaran : ${new Date(dt_periode?.tgl_bayar).toLocaleDateString('id-ID', dateOption.dateForPdf)}`,
+        _setText(`Tanggal Pinjam : ${tgl_pinjam.toLocaleDateString('id-ID', dateOption.dateForPdf)}`)
+        _setText(`Tanggal Pembayaran : ${tgl_bayar.toLocaleDateString('id-ID', dateOption.dateForPdf)}`,
             {}, doc.lastAutoTable.finalY, 0
         )
 
@@ -512,7 +530,7 @@
         const paraf = [
             [
                 { content: '', styles: { halign: 'center'} },
-                { content: new Date(dt_periode?.tgl_bayar).toLocaleDateString("id-ID", dateOption.dateForParaf), styles: { halign: 'center'} },
+                { content: tgl_bayar.toLocaleDateString("id-ID", dateOption.dateForParaf), styles: { halign: 'center'} },
             ],
             [
                 { content: '', styles: { halign: 'center'} },
