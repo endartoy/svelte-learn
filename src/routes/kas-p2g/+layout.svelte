@@ -1,7 +1,6 @@
 <script>
-	// Page data
     let { children } = $props()
-	import { page } from "$app/state";
+    import { page } from "$app/state";
     import { onMount } from "svelte";
 	import { fade, fly } from 'svelte/transition';
 
@@ -76,16 +75,16 @@
     }
 </script>
 
-<main>
+<div>
     {#if isSideBar}
-    <div class="modal-container transparent">
+    <dialog open transition:fade>
         <!-- svelte-ignore a11y_click_events_have_key_events -->
         <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <div onclick={() => openSidebar(false)} class="modal-backdrop"></div>
+        <div onclick={() => openSidebar(false)} class="dialog-backdrop"> </div>
 
-        <nav transition:fly={{ x: -300, duration: 300 }} > 
+        <div id="sidebar" transition:fly={{ x: 300, duration: 300 }} > 
             <div class="nav-header">
-                <span class="title"> KAS P2G </span>
+                <h3 class="title"> KAS P2G </h3>
     
                 <!-- svelte-ignore a11y_click_events_have_key_events -->
                 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
@@ -116,163 +115,158 @@
                     <span class="icon"><i class="fa-solid fa-right-to-bracket"></i></span>
                 </button>
             </div>
-        </nav>
-    </div>
+        </div>
+    </dialog>
     {/if}
 
-    <div class="head">
-        <div>
-            <button class="button primary bt-sidebar" onclick={(e) => {e.stopPropagation(); openSidebar(true)}} aria-label="side bar" >
-                <span><i class="fa-solid fa-bars"></i></span>
-            </button>
-            <span class="title">
-                {_currentPage?.title ? _currentPage.title : 'KAS P2G'}
-            </span>
-        </div>
+    <nav id="nav">
+        <div class="container">
+            <div class="row">                
+                <div class="col-xs" style="display: flex; align-items: center;" >
+                    <img src="/p2g.png" alt="Avatar" class="logo" /> 
+                    <span class="title">{_currentPage?.title ? _currentPage.title : 'KAS P2G'}</span>
+                </div>
 
-        <div>
-            <img src="/p2g.png" alt="Avatar" class="logo" />
+                <div class="col">
+                    <button class="btn-sidebar" onclick={(e) => {e.stopPropagation(); openSidebar(true)}} aria-label="side bar" >
+                        <span><i class="fa-solid fa-bars"></i></span>
+                    </button>
+                </div>
+            </div>
         </div>
-    </div>
+    </nav>
 
-    <div class="body">
+    <main class="container">
         {@render children()}
-    </div>
+    </main>
 
     <!-- Loading -->
     {#if $loadingStore > 0}
-        <div class='modal-container' transition:fade>
-            <div class="modal-backdrop"></div>
-            <div class="modal-content">
-                <h2>Loading</h2>
-                <progress class="progress"></progress>
+        <dialog open transition:fade>
+            <div class="dialog-content">
+                <!-- svelte-ignore element_invalid_self_closing_tag -->
+                <progress style="max-width: 350px; width: 50vw; height: 25px;" />
             </div>
-        </div>
+        </dialog>
     {/if}
 
     <!-- Alert -->
     <ComponentAlert />
-</main>
+</div>
 
 <style>
-    main {
-        position: relative;
-        max-width: 100dvw;
-        min-height: 100dvh;
+    :root,:host {
+        --nav-bg: var(--pico-color-jade-800);
+    }
 
-        > .head {
-            position: fixed;
-            top: 0px;
+    :root:not([data-theme=dark]), :host(:not([data-theme=dark])) {
+        --nav-bg: var(--pico-color-jade-300);
+    }
+
+    #nav {
+        background-color: var(--nav-bg);
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        margin-bottom: 10px;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+
+        .logo { width: 30px; height: 30px; margin-right: 1rem; }
+        .title { font-family: monospace; font-weight: bold; font-size: larger; }
+        .btn-sidebar { width: 30px; height: 30px; padding: 0 !important;}
+    }
+
+    #sidebar {
+        /* Nav Variabel */
+        --color: color-mix(in srgb, var(--nav-bg), var(--pico-background-color) 50%);
+        --color-outline: var(--nav-bg);
+
+        position: fixed;
+        top: 1dvh;
+        right: 1dvh;
+        min-width: 30dvw;
+        max-width: 90dvw;
+        height: 98dvh;
+        background-color: var(--pico-background-color);
+        border-radius: 5px;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        row-gap: 1em;
+        align-items: center;
+        justify-content: space-between;
+
+        > .nav-header {
             width: 100%;
-            padding: 5px;
-            z-index: 100;
-            background-color: rgb(255, 255, 255);
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            display: flex;
-            column-gap: 6px;
-            align-items: center;
-            justify-content: space-between;
-
-            .title { font-weight: 500; color: darkblue; padding-left: 1em; }
-
-            .logo { width: 30px; height: 30px; }
-        }
-
-        > .body {
-            padding-top: 50px;
-        }
-
-        nav {
-            /* Nav Variabel */
-            --nav-bg: #1de9b6;
-            --nav-link: color-mix(in srgb, var(--nav-bg) 50%, white 50%);
-            --nav-hover: #80cbc4;
-
-            position: fixed;
-            top: 1dvh;
-            left: 1dvh;
-            min-width: 30dvw;
-            max-width: 90dvw;
-            height: 98dvh;
-            background-color: var(--nav-bg);
-            border-radius: 5px;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
             display: flex;
             flex-direction: column;
             row-gap: 1em;
+
+            >.title {
+                text-align: center;
+                padding: 0.5em;
+            }
+
+            >.nav-link {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                text-align: right;
+                font-weight: 500;
+
+                > li {
+                    margin: 0px;
+                    list-style: none;
+                    background-color: var(--color);
+                    border-right: 5px solid var(--color-outline);
+
+                    &.sp-link {
+                        background-color: color-mix(in srgb, var(--color), white 90%);
+                    }
+
+                    a {
+                        display:block;
+                        padding: 10px;
+                        text-decoration: none;
+                        color: black;
+                    }
+
+                    &.is-active {
+                        background-color: var(--color-outline);
+                    }
+
+                    &:hover {
+                        background-color: color-mix(in srgb, var(--color-outline), white 60%);
+                    }
+                }
+            }
+        }
+
+        > .nav-footer {
+            width: 100%;
+            padding: 6px;
+            background-color: var(--color);
+            border-radius: 5px;
+            display: flex;
+            column-gap: 10px;
             align-items: center;
             justify-content: space-between;
 
-            > .nav-header {
-                width: 100%;
+            .user {
                 display: flex;
-                flex-direction: column;
-                row-gap: 1em;
-
-                >.title {
-                    font-size: large;
-                    font-weight: 800;
-                    text-align: center;
-                    padding: 1em;
-                }
-
-                >.nav-link {
-                    width: 100%;
-                    margin: 0;
-                    padding: 0;
-                    text-align: left;
-                    font-weight: 500;
-
-                    > li {
-                        margin: 0px;
-                        list-style: none;
-                        background-color: var(--nav-link);
-                        border-left: 3px solid var(--nav-hover);
-
-                        &.sp-link {
-                            background-color: color-mix(in srgb, var(--nav-hover) 10%, white 90%);
-                        }
-
-                        a {
-                            display:block;
-                            padding: 10px;
-                            text-decoration: none;
-                            color: black;
-                        }
-
-                        &:hover, &.is-active {
-                            background-color: var(--nav-hover);
-                        }
-                    }
-                }
-            }
-
-            > .nav-footer {
-                width: 100%;
-                padding: 6px;
-                background-color: var(--nav-hover);
-                border-radius: 5px;
-                display: flex;
-                column-gap: 10px;
+                column-gap: 6px;
                 align-items: center;
-                justify-content: space-between;
-
-                .user {
+                .avatar { width: 38px; height: 38px; border-radius: 19px; }
+                .user-detail {
                     display: flex;
-                    column-gap: 6px;
-                    align-items: center;
-                    .avatar { width: 38px; height: 38px; border-radius: 19px; }
-                    .user-detail {
-                        display: flex;
-                        flex-direction: column;
-                        .user-name { font-weight: 800; }
-                        .user-email { font-size: small; font-style: italic; }
-                    }
+                    flex-direction: column;
+                    .user-name { font-weight: 800; }
+                    .user-email { font-size: small; font-style: italic; }
                 }
             }
-
         }
+
     }
 </style>

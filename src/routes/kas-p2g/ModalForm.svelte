@@ -93,12 +93,12 @@
     // $inspect(formData)
 </script>
 
-<div class='modal-container' transition:fade={{duration: 100}}>
+<dialog open transition:fade={{duration: 100}}>
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="modal-backdrop" onclick={() => modalForm.hide()}> </div>
+    <div class="dialog-backdrop" onclick={() => modalForm.hide()}> </div>
 
-    <div class="modal-content">
+    <div class="dialog-content">
         <form onsubmit={(e) => {saveData(e)}} class='kas-form {formData.type}' >
             <div class="form-header">
                 <span class="header-title"> 
@@ -113,46 +113,50 @@
     
             <div class="form-body">
                 <div class="field">
-                  <input id='tanggal' bind:value={formData.tanggal} disabled={!isAllow} required type="date" class="input" placeholder="" />
-                  <label class="label" for="tanggal">Tanggal</label>
+                    <label class="label" for="tanggal">Tanggal</label>  
+                    <input id='tanggal' bind:value={formData.tanggal} disabled={!isAllow} required type="date" class="input" placeholder="" />
                 </div>
     
                 <div class="field">
+                    <label for="type" class="label fixed"> Pemasukan / Pengeluaran </label>
                     <select id='type' bind:value={formData.type} disabled={!isAllow} required>
                         <option value='debit'> Pemasukan / Debit </option>
                         <option value='kredit'> Pengeluaran / Kredit </option>
                     </select>
-                    <label for="type" class="label fixed"> Pemasukan / Pengeluaran </label>
                 </div>
                 <div class="field">
-                    <input id='jumlah' value={formData.jumlah} onkeyup={(e) => {formatRupiah(e.target); formData.jumlah = e.target.value}} disabled={!isAllow} required type="text" class="input" placeholder="" />
-                    <label for="jumlah" class="label">Jumlah</label>
+                    <input id='jumlah' value={formData.jumlah} onkeyup={(e) => {formatRupiah(e.target); formData.jumlah = e.target.value}} disabled={!isAllow} required type="text" class="input" placeholder="Jumlah" />
+                    <!-- <label for="jumlah" class="label">Jumlah</label> -->
                 </div>
                 <div class="field">
-                    <textarea id='ket' bind:value={formData.ket} disabled={!isAllow} required rows='7' ></textarea>
-                    <label for="ket" class="label fixed">Keterangan</label>
+                    <textarea id='ket' bind:value={formData.ket} disabled={!isAllow} required rows='7' placeholder="Keterangan" ></textarea>
+                    <!-- <label for="ket" class="label fixed">Keterangan</label> -->
                 </div>
             </div>
-      
-              
+
             {#if isAllow}
             <div class="form-footer">
-                {#if formData.id}
-                <button onclick={() => deleteData(formData.id)} type="button" class="button danger">
-                    <span>HAPUS</span>
-                    <span class="icon"><i class="fa-solid fa-trash-can"></i></span>
-                </button>
-                {/if}
-                
-                <button type="submit" class="button primary"> 
-                    <span>{formData.id ? 'SIMPAN' : 'TAMBAH'}</span>
-                    <span class="icon"><i class="fa-solid fa-floppy-disk"></i></span>
-                </button>
+                <div class="row between-xs">
+                    <div class="col">
+                        {#if formData.id}
+                        <button onclick={() => deleteData(formData.id)} type="button" class="danger">
+                            <!-- <span>HAPUS</span> -->
+                            <span class="icon"><i class="fa-solid fa-trash-can"></i></span>
+                        </button>
+                        {/if}
+                    </div>
+                    
+                    <div class="col">
+                        <button type="submit"> 
+                            <span>{formData.id ? 'SIMPAN' : 'TAMBAH'}</span>
+                        </button>
+                    </div>
+                </div>
             </div>
             {/if}
         </form>
     </div>
-</div>
+</dialog>
 
 <style>
     /* variabel */
@@ -167,6 +171,8 @@
     .kas-form {
         --debit: #a5d6a7;
         --kredit: #ffe082;
+
+        font-family: monospace;
 
         width: var(--kas-form-width);
         height: 85vh;
@@ -195,7 +201,7 @@
                 border: none
             }
     
-            .header-title { padding: var(--btn-padding); font-size: large; font-weight: 500; }
+            .header-title { padding: var(--btn-padding); font-size: larger; font-weight: 500; }
         }
 
         .form-body { padding: 1%; flex: 1 0 0; }
@@ -205,9 +211,6 @@
             width: 100%;
             padding: 6px;
             bottom: 0;
-            display: flex;
-            gap: var(--cel-gap);
-            justify-content: end;
         }
     
         &.debit {

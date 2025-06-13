@@ -41,8 +41,9 @@
         position: relative;
 
         .close {
-            height: 15px;
-            width: 15px;
+            height: 15px !important;
+            width: 15px !important;
+            padding: 0 !important;
             position: absolute;
             top: 5px;
             right: 5px;

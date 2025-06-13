@@ -35,18 +35,18 @@
     }
 </script>
 
-<div class="modal-container" transition:fade={{duration: 100}}>
+<dialog open transition:fade>
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="modal-backdrop" onclick={hideLogin}></div>
+    <div class="dialog-backdrop" onclick={hideLogin}></div>
 
-    <div class="modal-content">
+    <div class="dialog-content">
         <form onsubmit={(e) => { e.preventDefault(); signInSupabase() }} class="form-login">
             <input bind:value={email} type="email" class="input" placeholder="Email" required />
             <button type="submit" class="button primary"> Login </button>
         </form>
     </div>
-</div>
+</dialog>
 
 <style>
     /* variabel */

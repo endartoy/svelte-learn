@@ -79,13 +79,13 @@
     })
 </script>
 
-<div class="container">
-    <div class="row gap-0">
-        <div class="col-4 gap-0">
+<div>
+    <div class="row">
+        <div class="col-xs-12">
             <div class="table-container detail">
                 <div class="table-title"> 
                     <div>
-                        <button class="button small" style="color: blue;" onclick={() => goto('/lumbung-rt/periode')} aria-label="back" > 
+                        <button class="button plain" style="color: blue;" onclick={() => goto('/lumbung-rt/periode')} aria-label="back" > 
                             <i class="fa-solid fa-arrow-left"></i> 
                         </button>
                         Periode { data_periode.nama_periode }
@@ -93,11 +93,11 @@
 
                     {#if _isAdmin}
                     <div>
-                        <button class="button small" aria-label="edit" onclick={() => printPDF.show()} >
+                        <button class="button" aria-label="edit" onclick={() => printPDF.show()} >
                             <i class="fa-solid fa-print"></i>
                         </button>
 
-                        <button class="button small" aria-label="edit" onclick={() => modalForm.show(data_periode)} >
+                        <button class="button" aria-label="edit" onclick={() => modalForm.show(data_periode)} >
                             <i class="fa-solid fa-pencil"></i>
                         </button>
                     </div>
@@ -108,7 +108,7 @@
                     <table>
                         <tbody>
                             <tr>
-                                <td style="width: 150px;">Jasa</td>
+                                <td style="width: 180px;">Jasa</td>
                                 <td>{data_periode.jasa * 100} Persen</td>
                             </tr>
                             <tr>
@@ -134,8 +134,8 @@
         </div>
     </div>
 
-    <div class="row gap-0">
-        <div class="col-4">
+    <div class="row">
+        <div class="col-xs-12">
             <div class="table-container list">
                 <div class="table-title">
                     <span> Daftar Pinjaman </span>
@@ -191,7 +191,7 @@
                             {/each}
 
                             {#if temp_data_pinjam.data.length}
-                            <tr>
+                            <tr class="footer">
                                 <th class="text-end nama" colspan="2"> JUMLAH TOTAL </th>
                                 <th data-label="Pinj. Lama" class="text-end"> {temp_data_pinjam.sum.pinjam_lama ? viewRupiah(temp_data_pinjam.sum.pinjam_lama) : '-'} </th>
                                 <th data-label="Pinj. Baru" class="text-end"> {temp_data_pinjam.sum.pinjam_baru ? viewRupiah(temp_data_pinjam.sum.pinjam_baru)  : '-'} </th>
@@ -235,19 +235,19 @@
 <style>
 	.table-container {
         --color-table: #FADA7A;
+        --cel-gap: 8px;
 
-        background-color: color-mix(in srgb, var(--color-table), white 50%);
+        /* background-color: color-mix(in srgb, var(--color-table), white 50%);
         border: 2px solid var(--color-table);
-        border-radius: 5px;
+        border-radius: var(--pico-border-radius); */
         padding: var(--cel-gap);
-        /* padding-bottom: 50px; */
         position: relative;
         overflow-x: auto;
 
         > .table-title { 
             display: flex;
             justify-content: space-between;
-            /* padding: var(--cel-gap);  */
+            margin-bottom: var(--cel-gap);
             font-weight: bold;
 
             > .toggle-filter {
@@ -261,6 +261,10 @@
 
         > .table-body {
             > table {   
+                /* reset table bg color */
+                --pico-background-color: transparent !important;
+                font-family:sans-serif;
+
                 width: 100%;
                 border: 1px solid black;
                 border-collapse: collapse;
@@ -272,11 +276,16 @@
     
                 thead > tr {
                     background-color: var(--color-table);
+                    th { text-align: center; }
                 }
         
                 > tbody > tr {
 					background-color: color-mix(in srgb, var(--color-table), white 80%);
                     transition: background-color 0.2s ease;
+
+                    &.footer > th {
+                        font-weight: 600;
+                    }
         
                     &:nth-child(even) {
                         background-color: color-mix(in srgb, var(--color-table), white 45%);
@@ -286,13 +295,16 @@
                         background-color: var(--color-table);
                     }
 
-                    &.sisa_pinjam {
+                    &.sisa_pinjam td, 
+                    &.sisa_pinjam th {
                         color: #E52020;
                         font-weight: 500;
                     }
 
-                    &.bayar {
-                        color: #2E5077;
+                    &.bayar td,
+                    &.bayar th {
+                        /* color: #2E5077; */
+                        color: #E52020;
                         font-weight: 500;
                     }
                 }

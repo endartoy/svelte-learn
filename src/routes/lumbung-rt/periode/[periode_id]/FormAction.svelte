@@ -81,12 +81,12 @@
     }
 </script>
 
-<div class='modal-container' transition:fade={{duration: 100}}>
+<dialog open transition:fade={{duration: 100}}>
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="modal-backdrop" onclick={() => formAction.hide()}></div>
+    <div class="dialog-backdrop" onclick={() => formAction.hide()}></div>
 
-    <div class="modal-content" transition:fly={{delay: 100}}>
+    <div class="dialog-content" transition:fly={{delay: 100}}>
         <div class='form' >
             <div class="form-header">
                 <span class="header-title"> 
@@ -181,7 +181,7 @@
             {/if}
         </div>
     </div>
-</div>
+</dialog>
 
 <style>
     /* variabel */
@@ -195,8 +195,10 @@
     /* style */
     .form {
         --bg-color: #FADA7A;
+        --cel-gap: 8px;
+
         background-color: var(--bg-color);
-        border-radius: 5px;
+        border-radius: var(--pico-border-radius);
         
         .form-header, .action-button {
             background-color: color-mix(in srgb, var(--bg-color), white 30%);
@@ -266,13 +268,14 @@
     /* Custom Modal Style */
     @media (max-width: 600px) {
         .form { 
-            min-height: calc(100vh - 100vh / 3); 
+            min-height: calc(100vh - 100vh / 3) !important; 
             border-bottom-right-radius: 0;
             border-bottom-left-radius: 0;
         }
 
-        .modal-container {
-            justify-content: end;
+        dialog {
+            display: flex;
+            align-items: end;
         }
     }
 </style>

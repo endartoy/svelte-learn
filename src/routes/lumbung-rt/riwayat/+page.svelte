@@ -5,10 +5,10 @@
     let tb = $state('tb_periode')
 </script>
 
-<div class="container">
-    <div class="row center">
-        <div class="col-4 sm:col-4 md:col-2 lg:col-2">
-            <select id='tb' class="input query" bind:value={tb} >
+<div>
+    <div class="row center-xs">
+        <div class="col-xs-12 col-sm-8 col-md-6">
+            <select id='tb' bind:value={tb} >
                 <option value="tb_anggota" > DATA ANGGOTA </option>
                 <option value="tb_periode" > DATA PERIODE </option>
             </select>
@@ -23,8 +23,3 @@
         <Anggota />
     {/if}
 </div>
-
-<style>
-    .center { align-items: center; justify-content: center; }
-    .query { text-align: center; }
-</style>

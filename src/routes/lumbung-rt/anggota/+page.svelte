@@ -39,15 +39,15 @@
     })
 </script>
 
-<div class="container" style="padding-bottom: 80px;">
+<div style="padding-bottom: 80px;">
     <!--  -->
     <div class="row">
-        <div class="col-auto">
-            <input type="search" class="input" bind:value={filter_value} placeholder="Filter Berdasarkan Nama" />
+        <div class="col-xs">
+            <input type="search" class="filter" bind:value={filter_value} placeholder="Filter Berdasarkan Nama" />
         </div>
         
         {#if _isAdmin}
-        <div class="col-0">
+        <div class="col">
             <button onclick={() => modalForm.show()} class="button secondary">
                 <span class="icon"><i class="fa-solid fa-plus"></i></span>
                 <span>Anggota</span>
@@ -57,14 +57,18 @@
     </div>
 
     <div class="row">
-        <div class="col-4">
+        <div class="col-xs-12">
             <TableAnggota tb_anggota={tb_anggota} />
         </div>
     </div>
 
     <div class="footer">
-        <div class="row periode-info">
-            <span class="col-auto text-end">Jumlah Anggota: {tb_anggota?.length}</span>
+        <div class="container">
+            <div class="row end-xs">
+                <div class="col-xs">
+                    <span class="periode-info text-end">Jumlah Anggota: {tb_anggota?.length}</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -74,12 +78,13 @@
 {/if}
 
 <style>
-    .container {
-        width: 100%;
+    .filter {
+        border-radius: 0.25rem;
     }
+
     .periode-info {
-        font-size: large;
-        font-weight: 300;
+        font-size: larger;
+        font-weight:400;
     }
     
     .footer {
@@ -87,5 +92,6 @@
         background-color: white;
         position: fixed;
         bottom: 0;
+        left: 0;
     }
 </style>

@@ -13,10 +13,10 @@
 		<table>
 			<thead>
 				<tr>
-					<th style="width: 30px">#</th>
-					<th style="width: 90px">Tanggal</th>
+					<th class="text-center" style="width: 30px">#</th>
+					<th class="text-center" style="width: 90px">Tanggal</th>
 					<th>Keterangan</th>
-					<th style="width: 90px">Jumlah</th>
+					<th class="text-center" style="width: 90px">Jumlah</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -49,6 +49,8 @@
 	:root {
 		--debit: #a5d6a7;
         --kredit: #ffe082;
+
+        --cel-gap: 8px;
 	}
 
 	.table-container {
@@ -58,6 +60,7 @@
         padding: var(--cel-gap);
         padding-bottom: 50px;
         position: relative;
+        width: 100%;
         overflow-x: auto;
 
         > .table-title { 
@@ -68,6 +71,12 @@
 
         > .table-body {
             > table {
+                /* reset table bg color */
+                --pico-background-color: transparent !important;
+
+                font-family: monospace;
+                font-size: 13pt;
+
                 width: 100%;
                 border: 1px solid black;
                 border-collapse: collapse;
@@ -80,13 +89,13 @@
                 }
     
                 thead > tr {
-                    background-color: var(--color-table);
+                    background-color: var(--color-table) !important;
                 }
         
                 tbody > tr {
 					background-color: color-mix(in srgb, var(--color-table), white 80%);
                     transition: background-color 0.2s ease;
-        
+
                     &:nth-child(even) {
                         background-color: color-mix(in srgb, var(--color-table), white 45%);
                     }
@@ -99,6 +108,9 @@
         }
 
         > .table-footer {
+            font-family: monospace;
+            font-size: 13pt;
+
             width: calc(100% - 2 * var(--cel-gap));
             padding: var(--cel-gap); 
             display: flex;

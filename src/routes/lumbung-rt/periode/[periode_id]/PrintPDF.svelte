@@ -774,9 +774,9 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class='modal-container' transition:fade={{duration: 100}} >
-    <div class="modal-backdrop" onclick={() => printPDF.hide()}></div>
-    <div class="modal-content">
+<dialog open transition:fade={{duration: 100}} >
+    <div class="dialog-backdrop" onclick={() => printPDF.hide()}></div>
+    <div class="dialog-content">
         <div class='form' >
             <div class="form-header">
                 <span class="header-title"> 
@@ -815,7 +815,7 @@
             </div>
         </div>
     </div>
-</div>
+</dialog>
 
 <style>
     /* variabel */
@@ -828,8 +828,7 @@
 
     /* style */
     .form {
-        --bg-color: #FADA7A;
-        background-color: var(--bg-color);
+        background-color: var(--pico-color-grey-100);
         .form-header {
             background-color: color-mix(in srgb, var(--bg-color), white 30%);
         }

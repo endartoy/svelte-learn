@@ -37,13 +37,17 @@
 {#if !_isAllow}
 <h1 style="text-align: center;"> Akses ditolak </h1>
 {:else}
-<div class="container">
+<div>
     <div class="row">
         {#each users as user}
-            <div class="col-4 sm:col-2 md:col-2 lg:col-1" transition:fade>
+            <div class="col-xs-12 col-sm-6 col-md-4" transition:fade>
                 <UserCard user={user} getUsers={getUsers} />
             </div> 
         {/each}
     </div>
 </div>
 {/if}
+
+<style>
+    [class^="col-"] { margin-bottom: 1rem; }
+</style>

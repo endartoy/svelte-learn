@@ -75,20 +75,25 @@
         <span class="username"> {user?.displayName || 'Username'} </span>
         <span class="email"> ({user?.email || 'dummyemail@email.com'}) </span>
         <div class="field">
-            <input id={user?.id} class="input" disabled={!isEdit} type="text" bind:value={formData.role} placeholder="" />
             <label for={user?.id} class="label" > Role </label>
+            <input id={user?.id} class="input" disabled={!isEdit} type="text" bind:value={formData.role} placeholder="" />
         </div>
     </div>
 
     <div class="footer" >
-        <button onclick={() => fnDeleteUser()} class="button danger">
-            <span>HAPUS</span>
-            <span><i class="fa-solid fa-trash-can"></i></span>
-        </button>
-        <button onclick={() => {!isEdit ? toggleEdit() : toggleUpdate()}} class="button {!isEdit ? 'warning' : 'primary'}"> 
-            <span>{!isEdit ? 'EDIT' : 'SIMPAN'}</span> 
-            <span><i class="fa-solid fa-floppy-disk"></i></span>
-        </button>
+        <div class="row">
+            {#if !isEdit}
+            <button onclick={() => fnDeleteUser()} class="col-xs danger">
+                <span>HAPUS</span>
+                <!-- <span><i class="fa-solid fa-trash-can"></i></span> -->
+            </button>
+            {/if}
+    
+            <button onclick={() => {!isEdit ? toggleEdit() : toggleUpdate()}} class="col-xs {!isEdit ? 'warning' : 'primary'}" > 
+                <span>{!isEdit ? 'EDIT' : 'SIMPAN'}</span> 
+                <!-- <span><i class="fa-solid fa-floppy-disk"></i></span> -->
+            </button>
+        </div>
     </div>
 </div>
 
@@ -101,7 +106,7 @@
         >.body {
             display: flex;
             flex-direction: column;
-            column-gap: 2%;
+            column-gap: 1;
             align-items: center;
 
             >.avatar {
@@ -123,13 +128,12 @@
         }
 
         >.footer {
-            margin-top: 10px;
-            display: flex;
-            gap: var(--cel-gap);
-            background-color: transparent;
+            margin-top: 0.5rem;
 
-            > * {
-                flex: 1;
+            .col-xs {
+                margin-left: 1rem;
+                margin-right: 1rem;
+                margin-bottom: 0.5rem;
             }
         }
 

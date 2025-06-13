@@ -53,20 +53,20 @@
     })
 </script>
 
-<div class="container">
-    <div class="row gap-0">
-        <div class="col-4 gap-0">
+<div>
+    <div class="row">
+        <div class="col-xs-12">
             <div class="table-container detail">
                 <div class="table-title"> 
                     <div>
-                        <button class="button small" style="color: blue;" onclick={() => goto('/lumbung-rt/anggota')} aria-label="back" > 
+                        <button class="plain" style="color: blue;" onclick={() => goto('/lumbung-rt/anggota')} aria-label="back" > 
                             <i class="fa-solid fa-arrow-left"></i> 
                         </button>
                         { data_anggota?.nama }
                     </div>
 
                     {#if _isAdmin}
-                    <button class="button small" aria-label="edit" onclick={() => modalForm.show(data_anggota)} >
+                    <button aria-label="edit" onclick={() => modalForm.show(data_anggota)} >
                         <i class="fa-solid fa-pencil"></i>
                     </button>
                     {/if}
@@ -76,7 +76,7 @@
                     <table>
                         <tbody>
                             <tr>
-                                <td style="width: 90px;">Keterangan</td>
+                                <td style="width: 120px;">Keterangan</td>
                                 <td>{data_anggota?.ket ? data_anggota.ket.replace(/\\n/g, '\n') : '-'}</td>
                             </tr>
                         </tbody>
@@ -86,8 +86,8 @@
         </div>
     </div>
 
-    <div class="row gap-0">
-        <div class="col-4">
+    <div class="row">
+        <div class="col-xs-12">
             <div class="table-container list">
                 <span class="table-title">Catatan Pinjaman dan Pembayaran</span>
             
@@ -147,25 +147,28 @@
 <style>
 	.table-container {
         --color-table: #FADA7A;
+        --cel-gap: 8px;
 
-        background-color: color-mix(in srgb, var(--color-table), white 50%);
+        /* background-color: color-mix(in srgb, var(--color-table), white 50%);
         border: 2px solid var(--color-table);
-        border-radius: 5px;
-        height: 100%;
+        border-radius: var(--pico-border-radius); */
         padding: var(--cel-gap);
-        /* padding-bottom: 50px; */
         position: relative;
         overflow-x: auto;
 
         > .table-title { 
             display: flex;
             justify-content: space-between;
-            padding: var(--cel-gap); 
+            margin-bottom: var(--cel-gap);
             font-weight: bold;
         }
 
         > .table-body {
-            > table {
+            > table {   
+                /* reset table bg color */
+                --pico-background-color: transparent !important;
+                font-family:sans-serif;
+
                 width: 100%;
                 border: 1px solid black;
                 border-collapse: collapse;
@@ -177,9 +180,10 @@
     
                 thead > tr {
                     background-color: var(--color-table);
+                    th { text-align: center; }
                 }
         
-                tbody > tr {
+                > tbody > tr {
 					background-color: color-mix(in srgb, var(--color-table), white 80%);
                     transition: background-color 0.2s ease;
         
@@ -227,6 +231,7 @@
                         font-weight: 500;
                         text-transform: capitalize;
                     }
+
                 }
 
                 td::before, th::before {
@@ -234,6 +239,7 @@
                     font-weight: 500;
                     text-transform: capitalize;
                     padding-right: 5px;
+                    text-align: left;
                 }
 
                 td:last-child, th:last-child {

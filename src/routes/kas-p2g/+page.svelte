@@ -308,15 +308,15 @@
     })
 </script>
 
-<div class="container" style="padding-bottom: 40px;">
+<div style="padding-bottom: 40px;">
     <!--  -->
     <div class="row">
-        <div class="col-auto">
+        <div class="col-xs">
             <input type="date" bind:value={dateFilter} class="input" />
         </div>
         
         {#if ['superadmin', 'admin'].includes($userStore?.role)}
-        <div class="col-0">
+        <div class="col">
             <button onclick={buttonToPdf} class="button secondary">
                 <span>Export PDF</span>
             </button>
@@ -328,23 +328,35 @@
     </div>
 
     <div class="row">
-        <div class="col-4 md:col-2">
+        <div class="col-xs-12 col-lg-6">
             <ComponentTable title="PEMASUKAN" type="debit" data={dataFitered.debit} buttonFilter={buttonFilter} />
         </div>
 
-        <div class="col-4 md:col-2">
+        <div class="col-xs-12 col-lg-6">
             <ComponentTable title="PENGELUARAN" type="kredit" data={dataFitered.kredit} />
         </div>
     </div>
 
     <!-- Footer -->
     <div class="footer">
-        <div class="row">
+        <!-- <div class="row">
             <div class="col-auto">
                 <span> Jumlah Saldo </span>
             </div>
             <div class="col-0">
                 <span> {viewRupiah(dataFitered.saldo)} </span>
+            </div>
+        </div> -->
+
+        <div class="container">
+            <div class="row" >
+                <div class="col-xs">
+                    <span> Jumlah Saldo </span>
+                </div>
+                
+                <div class="col-xs total">
+                    <span> {viewRupiah(dataFitered.saldo)} </span>
+                </div>
             </div>
         </div>
     </div>
@@ -355,13 +367,24 @@
 {/if}
 
 <style>
+    .col-xs-12 {
+        margin-bottom: 1rem;
+    }
+
     .footer {
         width: 100%;
-        background-color: white;
         position: fixed;
         bottom: 0;
+        left: 0;
+        background-color: var(--pico-background-color);
+
+        .total {
+            display: flex;
+            justify-content: end;
+        }
+        
         span {
-            font-size: large;
+            font-size: larger;
             font-weight: bold;
         }
     }

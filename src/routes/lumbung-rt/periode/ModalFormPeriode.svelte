@@ -100,12 +100,12 @@
     }
 </script>
 
-<div class='modal-container' transition:fade={{duration: 100}}>
+<dialog open transition:fade>
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="modal-backdrop" onclick={() => modalForm.hide()}></div>
+    <div class="dialog-backdrop" onclick={() => modalForm.hide()}></div>
     
-    <div class="modal-content">
+    <div class="dialog-content">
         <form onsubmit={(e) => {saveData(e)}} class='form' >
             <div class="form-header">
                 <span class="header-title"> 
@@ -116,47 +116,54 @@
     
             <div class="form-body">
                 <div class="field">
-                  <input type="text" id='nama_periode' bind:value={formData.nama_periode} required  class="input" placeholder="" />
-                  <label class="label" for="nama_periode">Periode</label>
+                    <label class="label" for="nama_periode">Periode</label>
+                    <input type="text" id='nama_periode' bind:value={formData.nama_periode} required  class="input" placeholder="" />
                 </div>
     
                 <div class="field">
-                    <input type="number" step="0.01"  id='jasa' bind:value={formData.jasa} required  class="input" placeholder="" />
                     <label class="label" for="jasa">Jasa</label>
+                    <input type="number" step="0.01"  id='jasa' bind:value={formData.jasa} required  class="input" placeholder="" />
                 </div>
     
                 <div class="field">
-                    <input type="date" id='tgl_pinjam' bind:value={formData.tgl_pinjam} required  class="input" placeholder="" />
                     <label class="label" for="tgl_pinjam">Tanggal Pinjam</label>
+                    <input type="date" id='tgl_pinjam' bind:value={formData.tgl_pinjam} required  class="input" placeholder="" />
                 </div>
     
                 <div class="field">
-                    <input type="date" id='tgl_bayar' bind:value={formData.tgl_bayar} class="input" placeholder="" />
                     <label class="label" for="tgl_bayar">Tanggal Pembayaran</label>
+                    <input type="date" id='tgl_bayar' bind:value={formData.tgl_bayar} class="input" placeholder="" />
                 </div>
     
                 <div class="field">
-                    <textarea id='ket' bind:value={formData.ket} rows='7' ></textarea>
                     <label for="ket" class="label fixed">Keterangan</label>
+                    <textarea id='ket' bind:value={formData.ket} rows='7' ></textarea>
                 </div>
             </div>
       
             <div class="form-footer">
-                {#if formData.id}
-                <button onclick={() => deleteData()} type="button" class="button danger">
-                    <span class="icon"><i class="fa-solid fa-trash-can"></i></span>
-                    <span class="icon">HAPUS</span>
-                </button>
-                {/if}
+                <div class="row between-xs">
+                    <div class="col">
+                        {#if formData.id}
+                        <button onclick={() => deleteData()} type="button" class="button danger">
+                            <span class="icon"><i class="fa-solid fa-trash-can"></i></span>
+                            <span >HAPUS</span>
+                        </button>
+                        {/if}
+                    </div>
+
                 
-                <button type="submit" class="button primary"> 
-                    <span class="icon"><i class="fa-solid fa-floppy-disk"></i></span>
-                    <span>{formData.id ? 'SIMPAN' : 'TAMBAH'}</span>
-                </button>
+                    <div class="col">
+                        <button type="submit" class="button primary"> 
+                            <span class="icon"><i class="fa-solid fa-floppy-disk"></i></span>
+                            <span>{formData.id ? 'SIMPAN' : 'TAMBAH'}</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </form>
     </div>
-</div>
+</dialog>
 
 <style>
     /* variabel */
@@ -202,19 +209,27 @@
                 border: none
             }
     
-            .header-title { padding: var(--btn-padding); font-size: large; font-weight: 500; }
+            .header-title { padding: var(--btn-padding); font-size: large; font-weight: 800; }
         }
 
-        .form-body { padding: 1%; flex: 1 0 0; }
+        .form-body { 
+            padding: 0.5em; 
+            flex: 1 0 0; 
+
+            .field {
+                margin-bottom: 0.5em;
+
+                label, input, textarea {
+                    margin: 0;
+                }
+            }
+        }
     
         .form-footer {
             position: sticky;
             width: 100%;
             padding: 6px;
             bottom: 0;
-            display: flex;
-            gap: var(--cel-gap);
-            justify-content: end;
         }
 
         -ms-overflow-style: none; /* IE 10+ */

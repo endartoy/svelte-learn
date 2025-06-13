@@ -1,4 +1,5 @@
 <script>
+	import { goto } from "$app/navigation";
 	import { alertStore } from "$lib/stores/alertStore";
 	import { loadingStore } from "$lib/stores/loadingStore";
 	import { getAllListAnggota, hardDelAnggota, restoreDelAnggota } from "$lib/supabase/tb_anggota";
@@ -63,7 +64,7 @@
 </script>
 
 <div class="row">
-    <div class="col-4">
+    <div class="col-xs-12">
         <div class="table-container" in:fade >
             <div class="table-filter">
                 <input type="search" class="input" bind:value={query} placeholder="Pencarian..." />
@@ -106,11 +107,11 @@
 </div>
 
 {#if selected_id}
-<div class="modal-container" transition:fade={{duration: 100}}>
+<dialog open transition:fade={{duration: 100}}>
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div onclick={() => {selected_id = null; disableBodyScroll(false)}} class="modal-backdrop"></div>
-    <div class="modal-content">
+    <div onclick={() => {selected_id = null; disableBodyScroll(false)}} class="dialog-backdrop"></div>
+    <div class="dialog-content">
         <div class="form">
             <div class="form-header">
                 <span class="header-title"> 
@@ -121,50 +122,53 @@
 
             <div class="form-body">
                 <span class="title-history"> Riwayat Data </span>
-                <div class="table-container">
-                    <div class="table-body">
-                        <table>
-                            <tbody in:fade>
-                                {#each selected_data._history as res }
-                                <tr style="text-align: left;">
-                                    <th>{res.action}</th> 
-                                    <td>
-                                        <pre>{JSON.stringify(res.data, null, 2)}</pre>
-                                    </td>
-                                </tr>
-                                {/each}
-                            </tbody>
-                        </table>
-                    </div>
+                
+                <div class="detail">
+                    <table class="striped">
+                        <tbody in:fade>
+                            {#each selected_data._history as res }
+                            <tr style="text-align: left;">
+                                <th>{res.action}</th> 
+                                <td>
+                                    <pre>{JSON.stringify(res.data, null, 2)}</pre>
+                                </td>
+                            </tr>
+                            {/each}
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
             <div class="form-footer">
-            {#if selected_data._delete}
-                <button onclick={() => restoreData()} type="submit" class="button warning"> 
-                    <span>RESTORE DATA</span>
-                    <span class="icon"><i class="fa-solid fa-floppy-disk"></i></span>
-                </button>
+                {#if selected_data._delete}
+                    <div role="group">
+                        <button onclick={() => restoreData()} type="submit" class="warning"> 
+                            <span>RESTORE DATA</span>
+                            <span class="icon"><i class="fa-solid fa-floppy-disk"></i></span>
+                        </button>
 
-                <button onclick={() => deleteData()} type="button" class="button danger">
-                    <span>HAPUS PERMANEN</span>
-                    <span class="icon"><i class="fa-solid fa-trash-can"></i></span>
-                </button>
-            {:else}
-                <button href={`/lumbung-rt/anggota/${selected_data.id}`} class="button primary">
-                    <span>Edit Data</span> 
-                    <span class="icon"><i class="fa-solid fa-arrow-right"></i></span>
-                </button>
-            {/if}
+                        <button onclick={() => deleteData()} type="button" class="danger">
+                            <span>HAPUS PERMANEN</span>
+                            <span class="icon"><i class="fa-solid fa-trash-can"></i></span>
+                        </button>
+                    </div>
+                {:else}
+                    <button onclick={() => {disableBodyScroll(false), goto(`/lumbung-rt/anggota/${selected_data.id}`)}} class="primary col-xs">
+                        <span>Edit Data</span> 
+                        <span class="icon"><i class="fa-solid fa-arrow-right"></i></span>
+                    </button>
+                {/if}
+                
             </div>
         </div>
     </div>
-</div>
+</dialog>
 {/if}
 
 <style>
 	.table-container {
         --color-table: #9DC08B;
+        --cel-gap: 0.5em;
 
         background-color: color-mix(in srgb, var(--color-table), white 50%);
         padding: var(--cel-gap);
@@ -178,6 +182,9 @@
 
         > .table-body {
             > table {
+                /* reset table bg color */
+                --pico-background-color: transparent !important;
+
                 width: 100%;
                 border: 1px solid black;
                 border-collapse: collapse;
@@ -189,6 +196,7 @@
     
                 thead > tr {
                     background-color: var(--color-table);
+                    > th { text-align: center; }
                 }
         
                 tbody > tr {
@@ -216,8 +224,8 @@
     :root {
         --form-width: 95vw;
         @media (min-width: 480px) { --form-width: 95vw; }
-        @media (min-width: 768px) { --form-width: 75vw; }
-        @media (min-width: 1024px) { --form-width: 50vw; }
+        @media (min-width: 768px) { --form-width: 85vw; }
+        @media (min-width: 1024px) { --form-width: 70vw; }
     }
 
     /* style */
@@ -263,6 +271,11 @@
             flex: 1 0 0;
 
             .title-history { font-weight: 500; font-size: large; }
+
+            .detail {
+                font-family: monospace;
+                overflow-x: auto;
+            }
         }
     
         .form-footer {
@@ -273,6 +286,8 @@
             display: flex;
             gap: var(--cel-gap);
             > button { flex: 1; }
+
+            [role="group"] { margin-bottom: 0; }
         }
 
         -ms-overflow-style: none; /* IE 10+ */

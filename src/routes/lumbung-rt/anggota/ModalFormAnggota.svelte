@@ -99,12 +99,12 @@
     }
 </script>
 
-<div class='modal-container' transition:fade={{duration: 100}}>
+<dialog open transition:fade={{duration: 100}}>
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <div class="modal-backdrop" onclick={() => modalForm.hide()}></div>
+    <div class="dialog-backdrop" onclick={() => modalForm.hide()}></div>
     
-    <div class="modal-content">
+    <div class="dialog-content">
         <form onsubmit={(e) => {saveData(e)}} class='form' >
             <div class="form-header">
                 <span class="header-title"> 
@@ -115,32 +115,38 @@
     
             <div class="form-body">
                 <div class="field">
-                  <input type="text" id='nama' bind:value={formData.nama} required  class="input" placeholder="" />
-                  <label class="label" for="nama">Nama</label>
+                    <label class="label" for="nama">Nama</label>
+                    <input type="text" id='nama' bind:value={formData.nama} required  class="input" placeholder="" />
                 </div>
     
                 <div class="field">
-                    <textarea id='ket' bind:value={formData.ket} rows='7' ></textarea>
                     <label for="ket" class="label fixed">Keterangan</label>
+                    <textarea id='ket' bind:value={formData.ket} rows='7' ></textarea>
                 </div>
             </div>
       
             <div class="form-footer">
-                {#if formData.id}
-                <button onclick={() => deleteData()} type="button" class="button danger">
-                    <span>HAPUS</span>
-                    <span class="icon"><i class="fa-solid fa-trash-can"></i></span>
-                </button>
-                {/if}
-                
-                <button type="submit" class="button primary"> 
-                    <span>{formData.id ? 'SIMPAN' : 'TAMBAH'}</span>
-                    <span class="icon"><i class="fa-solid fa-floppy-disk"></i></span>
-                </button>
+                <div class="row between-xs">
+                    <div class="col">
+                        {#if formData.id}
+                        <button onclick={() => deleteData()} type="button" class="button danger">
+                            <span>HAPUS</span>
+                            <span class="icon"><i class="fa-solid fa-trash-can"></i></span>
+                        </button>
+                        {/if}
+                    </div>
+
+                    <div class="col">
+                        <button type="submit" class="button primary"> 
+                            <span>{formData.id ? 'SIMPAN' : 'TAMBAH'}</span>
+                            <span class="icon"><i class="fa-solid fa-floppy-disk"></i></span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </form>
     </div>
-</div>
+</dialog>
 
 <style>
     /* variabel */
@@ -186,7 +192,7 @@
                 border: none
             }
     
-            .header-title { padding: var(--btn-padding); font-size: large; font-weight: 500; }
+            .header-title { padding: var(--btn-padding); font-size: large; font-weight: 600; }
         }
 
         .form-body { padding: 1%; flex: 1 0 0; }
@@ -194,11 +200,8 @@
         .form-footer {
             position: sticky;
             width: 100%;
-            padding: 6px;
+            padding: 0.5em;
             bottom: 0;
-            display: flex;
-            gap: var(--cel-gap);
-            justify-content: end;
         }
 
         -ms-overflow-style: none; /* IE 10+ */

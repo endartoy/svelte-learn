@@ -52,24 +52,27 @@
 <style>
 	.table-container {
         --color-table: #FADA7A;
+        --cel-gap: 8px;
 
         background-color: color-mix(in srgb, var(--color-table), white 50%);
         border: 2px solid var(--color-table);
-        border-radius: 5px;
+        border-radius: var(--pico-border-radius);
         height: 100%;
         padding: var(--cel-gap);
-        /* padding-bottom: 50px; */
         position: relative;
         overflow-x: auto;
 
         > .table-title { 
             display: block;
-            padding: var(--cel-gap); 
+            margin-bottom: var(--cel-gap); 
             font-weight: bold;
         }
 
         > .table-body {
             > table {
+                /* reset table bg color */
+                --pico-background-color: transparent !important;
+
                 width: 100%;
                 border: 1px solid black;
                 border-collapse: collapse;
@@ -81,6 +84,7 @@
     
                 thead > tr {
                     background-color: var(--color-table);
+                    > th { text-align: center; }
                 }
         
                 tbody > tr {
