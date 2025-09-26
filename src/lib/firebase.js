@@ -78,7 +78,7 @@ const fnSignOut = async() => {
     await signOut(auth)
 }
 
-// Get Data Kas
+// Get Data Kas p2g
 const getKasP2g = (callback) => {
     return new Promise((resolve, reject) => {
         try {
@@ -100,7 +100,7 @@ const getKasP2g = (callback) => {
     })
 }
 
-// Add kas
+// Add kas P2g
 const addKas = async(formData, callback) => {
     let result = null
     let error = null
@@ -128,7 +128,7 @@ const addKas = async(formData, callback) => {
     
 }
 
-// Update Kas
+// Update Kas P2g
 const updateKas = async(formData, callback) => {
     let result = null
     let error = null
@@ -158,7 +158,7 @@ const updateKas = async(formData, callback) => {
     
 }
 
-// delete Kas
+// delete Kas P2g
 const deleteKas = async(id, callback) => {
     let result = null
     let error = null
@@ -167,6 +167,106 @@ const deleteKas = async(id, callback) => {
         if (!id) throw new Error("Invalid ID");
 
         const docRef = doc(db, 'kas', id)
+        return await deleteDoc(docRef)
+        .then(() => { result = 'Hapus data berhasil' })
+        .catch(error => { throw new Error(error.message); }) 
+    } catch (error) {
+        error = `${err?.code ? err.code : 'error'} : ${err?.message ? err.message : err}`
+    } finally {
+        callback(result, error)
+        return() => {}
+    }
+}
+
+// Get Data Kas gfc
+const getKasGfc = (callback) => {
+    return new Promise((resolve, reject) => {
+        try {
+            let colRef = collection(db, 'kas-gfc')
+            colRef = query(colRef, orderBy('tanggal'))
+    
+            const unSubscribe = onSnapshot(colRef, 
+                (snapshot) => {
+                    callback(snapshot)
+                },
+                (err) => { throw new Error(err.message) },
+            )
+
+            resolve(unSubscribe)
+        } catch (err) {
+            let error = `${err?.code ? err?.code : 'error'} : ${err?.message ? err?.message : err}`
+            reject(error)
+        }
+    })
+}
+
+// Add kas gfc
+const addKasGfc = async(formData, callback) => {
+    let result = null
+    let error = null
+
+    try {
+        const colRef = collection(db, 'kas-gfc')
+        return await addDoc(colRef, {
+            tanggal: new Date(formData.tanggal),
+            jumlah: formatInterger(formData.jumlah),
+            type: formData.type,
+            ket: formData.ket,
+        })
+        .then(() => {
+            result = 'Tambah data berhasil.'
+        })
+        .catch((error) => {
+            throw new Error(error.message);
+        })  
+    } catch (error) {
+        error = `${err?.code ? err.code : 'error'} : ${err?.message ? err.message : err}`
+    } finally {
+        callback(result, error)
+        return() => {}
+    }
+    
+}
+
+// Update Kas gfc
+const updateKasGfc = async(formData, callback) => {
+    let result = null
+    let error = null
+
+    try {
+        if (!formData.id) throw new Error("Invalid ID");
+        
+        const docRef = doc(db, 'kas-gfc', formData.id)
+        return await updateDoc(docRef, {
+            tanggal: new Date(formData.tanggal),
+            type: formData.type,
+            jumlah: formatInterger(formData.jumlah),
+            ket: formData.ket,
+        }, { merge: true })
+        .then(() => {
+            result = "Update data berhasil."
+        })
+        .catch((error) => {
+            throw new Error(error.message);
+        })  
+    } catch (error) {
+        error = `${err?.code ? err.code : 'error'} : ${err?.message ? err.message : err}`
+    } finally {
+        callback(result, error)
+        return() => {}
+    }
+    
+}
+
+// delete Kas gfc
+const deleteKasGfc = async(id, callback) => {
+    let result = null
+    let error = null
+
+    try {
+        if (!id) throw new Error("Invalid ID");
+
+        const docRef = doc(db, 'kas-gfc', id)
         return await deleteDoc(docRef)
         .then(() => { result = 'Hapus data berhasil' })
         .catch(error => { throw new Error(error.message); }) 
@@ -268,4 +368,5 @@ const deleteUser = async(formData, callback) => {
 
 export { authStateListener, fnSignIn, fnSignOut }
 export { getKasP2g, addKas, updateKas, deleteKas }
+export { getKasGfc, addKasGfc, updateKasGfc, deleteKasGfc }
 export { getUser, updateUser, deleteUser }

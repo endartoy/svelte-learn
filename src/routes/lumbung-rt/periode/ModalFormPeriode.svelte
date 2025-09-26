@@ -169,9 +169,10 @@
     /* variabel */
     :root {
         --form-width: 95vw;
-        @media (min-width: 480px) { --form-width: 95vw;}
-        @media (min-width: 768px) { --form-width: 75vw;}
-        @media (min-width: 1024px) { --form-width: 50vw;}
+        --form-height: 75vh;
+        @media (min-width: 480px) { --form-width: 95vw; --form-height: 75vh;}
+        @media (min-width: 768px) { --form-width: 75vw; --form-height: 80vh;}
+        @media (min-width: 1024px) { --form-width: 50vw; --form-height: 85vh;}
     }
 
     /* style */
@@ -183,7 +184,7 @@
         }
 
         width: var(--form-width);
-        height: 85vh;
+        height: var(--form-height);
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
         overflow: auto;
         position: relative;

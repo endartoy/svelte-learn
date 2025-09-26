@@ -28,11 +28,11 @@
 
 <script>
     let { role } = $props()
-    const isAllow = ['superadmin', 'admin'].includes(role)
+    const isAllow = ['superadmin', 'gadenfc'].includes(role)
 
     import { fade } from "svelte/transition";
     import { disableBodyScroll, viewRupiah, formatRupiah } from "$lib/tools";
-	import { addKas, updateKas, deleteKas } from "$lib/firebase";
+	import { addKasGfc, updateKasGfc, deleteKasGfc } from "$lib/firebase";
 	import { alertStore } from "$lib/stores/alertStore";
 	import { loadingStore } from "$lib/stores/loadingStore";
 
@@ -58,11 +58,11 @@
             let data = { ...formData }
 
             if (formData?.id) {
-                await updateKas(data, (res, error) => {
+                await updateKasGfc(data, (res, error) => {
                     _do(res, error)
                 })
             } else {
-                await addKas(data, (res, error) => {
+                await addKasGfc(data, (res, error) => {
                     _do(res, error)
                 })
             }
@@ -80,7 +80,7 @@
 
         try {
             loadingStore.show()
-            await deleteKas(id, (res, error) => {
+            await deleteKasGfc(id, (res, error) => {
                 _do(res, error)
             })
         } catch (error) {

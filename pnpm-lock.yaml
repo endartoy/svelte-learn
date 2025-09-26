@@ -17,6 +17,9 @@ importers:
       firebase:
         specifier: ^11.2.0
         version: 11.2.0
+      html2canvas:
+        specifier: ^1.4.1
+        version: 1.4.1
       jspdf:
         specifier: ^2.5.2
         version: 2.5.2
@@ -1634,8 +1637,7 @@ snapshots:
 
   axobject-query@4.1.0: {}
 
-  base64-arraybuffer@1.0.2:
-    optional: true
+  base64-arraybuffer@1.0.2: {}
 
   btoa@1.2.1: {}
 
@@ -1673,7 +1675,6 @@ snapshots:
   css-line-break@2.1.0:
     dependencies:
       utrie: 1.0.2
-    optional: true
 
   debug@4.4.0:
     dependencies:
@@ -1772,7 +1773,6 @@ snapshots:
     dependencies:
       css-line-break: 2.1.0
       text-segmentation: 1.0.3
-    optional: true
 
   http-parser-js@0.5.9: {}
 
@@ -1947,7 +1947,6 @@ snapshots:
   text-segmentation@1.0.3:
     dependencies:
       utrie: 1.0.2
-    optional: true
 
   totalist@3.0.1: {}
 
@@ -1960,7 +1959,6 @@ snapshots:
   utrie@1.0.2:
     dependencies:
       base64-arraybuffer: 1.0.2
-    optional: true
 
   vite@5.4.11(@types/node@22.10.7):
     dependencies:

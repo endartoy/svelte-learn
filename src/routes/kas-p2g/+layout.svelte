@@ -59,6 +59,11 @@
             class: ''
         },
         {
+            title: 'KAS GADEN FC',
+            url: '/kas-p2g/gfc',
+            class: ''
+        },
+        {
             title: 'USER MANAGEMEN',
             url: '/kas-p2g/manage-user',
             class: 'sp-link'
@@ -91,6 +96,10 @@
                 <ul onclick={() => openSidebar(false)} class="nav-link">
                     <li class:is-active={page.url.pathname === '/kas-p2g'}>
                         <a href="/kas-p2g" > KAS P2G </a>
+                    </li>
+
+                    <li class:is-active={page.url.pathname.split('/').includes('gfc', 2)}>
+                        <a href="/kas-p2g/gfc" > KAS GADEN FC </a>
                     </li>
     
                     {#if $userStore?.role === 'superadmin'}
