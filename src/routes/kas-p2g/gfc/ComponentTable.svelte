@@ -1,5 +1,5 @@
 <script>
-	let { title, type, data, buttonFilter = null } = $props();
+	let { title, type, data, buttonFilter = null, isAdmin = false } = $props();
 
 	import { viewRupiah, dateOption } from "$lib/tools";
 	import { fade } from "svelte/transition";
@@ -22,7 +22,9 @@
 			<tbody>
 				{#each data.data as res, i}
 				<tr transition:fade
-					onclick={() => res.id ? modalForm.show(res) : buttonFilter()} 
+					onclick={() => res.id 
+                    ? isAdmin && modalForm.show(res) 
+                    : buttonFilter()} 
 				>
 					<td class="text-center text-bold nomor"> {i+1} </td>
 					<td class="lg-tgl" > {res?.tanggal.toLocaleDateString('id-ID', dateOption.duadigit)} </td>

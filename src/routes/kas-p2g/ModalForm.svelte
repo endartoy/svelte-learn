@@ -35,6 +35,7 @@
 	import { addKas, updateKas, deleteKas } from "$lib/firebase";
 	import { alertStore } from "$lib/stores/alertStore";
 	import { loadingStore } from "$lib/stores/loadingStore";
+	import { onMount } from "svelte";
 
     let formData = modalForm.formData
 
@@ -96,64 +97,59 @@
 <dialog open transition:fade={{duration: 100}}>
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="dialog-backdrop" onclick={() => modalForm.hide()}> </div>
+    <div class="backdrop" onclick={() => modalForm.hide()}> </div>
 
-    <div class="dialog-content">
+    <div class="content">
         <form onsubmit={(e) => {saveData(e)}} class='kas-form {formData.type}' >
-            <div class="form-header">
-                <span class="header-title"> 
-                    {#if role}
-                        Form {formData.id ? 'Update' : 'Tambah'} 
-                    {:else}
-                        Detail
-                    {/if}
-                </span>
-                <button onclick={(e) => modalForm.hide()} type="button" class="close" aria-label="close"> </button>
-            </div>
-    
-            <div class="form-body">
-                <div class="field">
-                    <label class="label" for="tanggal">Tanggal</label>  
-                    <input id='tanggal' bind:value={formData.tanggal} disabled={!isAllow} required type="date" class="input" placeholder="" />
-                </div>
-    
-                <div class="field">
-                    <label for="type" class="label fixed"> Pemasukan / Pengeluaran </label>
-                    <select id='type' bind:value={formData.type} disabled={!isAllow} required>
-                        <option value='debit'> Pemasukan / Debit </option>
-                        <option value='kredit'> Pengeluaran / Kredit </option>
-                    </select>
-                </div>
-                <div class="field">
-                    <input id='jumlah' value={formData.jumlah} onkeyup={(e) => {formatRupiah(e.target); formData.jumlah = e.target.value}} disabled={!isAllow} required type="text" class="input" placeholder="Jumlah" />
-                    <!-- <label for="jumlah" class="label">Jumlah</label> -->
-                </div>
-                <div class="field">
-                    <textarea id='ket' bind:value={formData.ket} disabled={!isAllow} required rows='7' placeholder="Keterangan" ></textarea>
-                    <!-- <label for="ket" class="label fixed">Keterangan</label> -->
-                </div>
-            </div>
-
-            {#if isAllow}
-            <div class="form-footer">
-                <div class="row between-xs">
-                    <div class="col">
-                        {#if formData.id}
-                        <button onclick={() => deleteData(formData.id)} type="button" class="danger">
-                            <!-- <span>HAPUS</span> -->
-                            <span class="icon"><i class="fa-solid fa-trash-can"></i></span>
-                        </button>
+            <fieldset>
+                <legend>
+                    <span class="title">
+                        {#if role}
+                            Form {formData.id ? 'Update' : 'Tambah'} 
+                        {:else}
+                            Detail
                         {/if}
-                    </div>
-                    
-                    <div class="col">
+                    </span>
+
+                    <button onclick={(e) => modalForm.hide()} type="button" class="close" aria-label="close"> </button>
+                </legend>
+
+                <div>
+                    <p>
+                        <!-- <label class="label" for="tanggal">Tanggal</label>   -->
+                        <input id='tanggal' bind:value={formData.tanggal} disabled={!isAllow} required type="date" class="input" placeholder="" />
+                    </p>
+                    <p class="field">
+                        <!-- <label for="type" class="label fixed"> Pemasukan / Pengeluaran </label> -->
+                        <select id='type' bind:value={formData.type} disabled={!isAllow} required>
+                            <option value='debit'> Pemasukan / Debit </option>
+                            <option value='kredit'> Pengeluaran / Kredit </option>
+                        </select>
+                    </p>
+                    <p class="field">
+                        <input id='jumlah' value={formData.jumlah} onkeyup={(e) => {formatRupiah(e.target); formData.jumlah = e.target.value}} disabled={!isAllow} required type="text" class="input" placeholder="Jumlah" />
+                        <!-- <label for="jumlah" class="label">Jumlah</label> -->
+                    </p>
+                    <p class="field">
+                        <textarea id='ket' bind:value={formData.ket} disabled={!isAllow} required rows='7' placeholder="Keterangan" ></textarea>
+                        <!-- <label for="ket" class="label fixed">Keterangan</label> -->
+                    </p>
+                </div>
+
+                {#if isAllow}
+                    <div class="form-footer">
+                        {#if formData.id}
+                            <button onclick={() => deleteData(formData.id)} type="button" class="button error icon-only" aria-label="hapus">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        {/if}
+
                         <button type="submit"> 
-                            <span>{formData.id ? 'SIMPAN' : 'TAMBAH'}</span>
+                            <span>{formData?.id ? 'SIMPAN' : 'TAMBAH'}</span>
                         </button>
                     </div>
-                </div>
-            </div>
-            {/if}
+                {/if}
+            </fieldset>
         </form>
     </div>
 </dialog>
@@ -162,10 +158,16 @@
     /* variabel */
     :root {
         --kas-form-width: 95vw;
-        --kas-form-height: 75vh;
-        @media (min-width: 480px) { --kas-form-width: 95vw; --kas-form-height: 75vh; }
-        @media (min-width: 768px) { --kas-form-width: 75vw; --kas-form-height: 80vh; }
-        @media (min-width: 1024px) { --kas-form-width: 50vw; --kas-form-height: 90vh; }
+        --kas-form-height: 95vh;
+
+        @media (min-width: 480px) { --kas-form-width: 95vw; }
+        @media (min-width: 768px) { --kas-form-width: 75vw; }
+        @media (min-width: 1024px) { --kas-form-width: 50vw; }
+    }
+
+    .content {
+        bottom: 0;
+        transform: translate(-50%, 0);
     }
 
     /* style */
@@ -173,59 +175,52 @@
         --debit: #a5d6a7;
         --kredit: #ffe082;
 
+        width: var(--kas-form-width);
+        max-height: var(--kas-form-height);
+        padding: 1rem;
         font-family: monospace;
 
-        width: var(--kas-form-width);
-        height: var(--kas-form-height);
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        overflow: auto;
-        position: relative;
+        overflow: scroll;
         transition: background-color 500ms ease;
-        display: flex;
-        flex-direction: column;
 
-        .form-header {
-            position: sticky;
-            top: 0;
+        /* header */
+        fieldset > legend {
             width: 100%;
-            padding: 6px;
-            display: flex;
-            align-items: center;
+            background-color: transparent;
+            display: inline-flex;
             justify-content: space-between;
-            z-index: 1;
-            
+            align-items: center;
+
+            .title {
+                font-size: 20px;
+                font-weight: bold;
+            }
+
             .close {
-                height: 15px;
-                width: 15px;
+                height: 20px;
+                width: 20px;
+                padding: 0;
                 background-color: #ff5252;
                 border-radius: 8px;
                 border: none
             }
-    
-            .header-title { padding: var(--btn-padding); font-size: larger; font-weight: 500; }
-        }
-
-        .form-body { padding: 1%; flex: 1 0 0; }
+        }    
     
         .form-footer {
             position: sticky;
             width: 100%;
-            padding: 6px;
             bottom: 0;
+            display: inline-flex;
+            justify-content: end;
+            gap: 10px;
         }
     
         &.debit {
             background-color: var(--debit);
-            .form-header, .form-footer {
-                background-color: color-mix(in srgb, var(--debit), white 30%);
-            }
         }
         
         &.kredit {
             background-color: var(--kredit);
-            .form-header, .form-footer {
-                background-color: color-mix(in srgb, var(--kredit), white 30%);
-            }
         }
 
         -ms-overflow-style: none; /* IE 10+ */

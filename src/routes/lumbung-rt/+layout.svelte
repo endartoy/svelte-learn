@@ -97,6 +97,16 @@
     }
 </script>
 
+<svelte:head>
+    <title> LUMBUNG RT </title>
+
+    <!-- style pico css & flexbox -->
+    <link rel="stylesheet" href="/style/pico.min.css">
+    <link rel="stylesheet" href="/style/pico.colors.min.css">
+    <link rel="stylesheet" href="/style/flexboxgrid.min.css">
+    <link rel="stylesheet" href="/style/custom.css">
+</svelte:head>
+
 <main>
     {#if isSideBar}
     <dialog open transition:fade>

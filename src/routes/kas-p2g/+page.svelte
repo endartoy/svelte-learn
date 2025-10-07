@@ -10,6 +10,9 @@
 	import { viewRupiah, dateOption } from "$lib/tools";
 	import jsPDF from "jspdf";
 
+    // isAdmin
+    let isAdmin = $derived(['superadmin', 'admin'].includes($userStore?.role))
+
     let dataKas = $state([])
     let dataFitered = $state({
         debit: {
@@ -311,52 +314,41 @@
 <div style="padding-bottom: 40px;">
     <!--  -->
     <div class="row">
-        <div class="col-xs">
+        <div class="col">
             <input type="date" bind:value={dateFilter} class="input" />
         </div>
         
-        {#if ['superadmin', 'admin'].includes($userStore?.role)}
-        <div class="col">
-            <button onclick={buttonToPdf} class="button secondary">
-                <span>Export PDF</span>
+        {#if isAdmin}
+        <div class="col-fixed">
+            <button onclick={buttonToPdf} class="button secondary icon-only" aria-label="print">
+                <i class="fa-solid fa-print"></i>
             </button>
-            <button onclick={() => modalForm.show()} class="button primary" aria-label='tambah data'>
-                <span class="icon"><i class="fa-solid fa-plus"></i></span>
+            <button onclick={() => modalForm.show()} class="button primary icon-only" aria-label='tambah data'>
+                <i class="fa-solid fa-plus"></i>
             </button>
         </div>
         {/if}
     </div>
 
     <div class="row">
-        <div class="col-xs-12 col-lg-6">
-            <ComponentTable title="PEMASUKAN" type="debit" data={dataFitered.debit} buttonFilter={buttonFilter} />
+        <div class="col-12 col-6-lg">
+            <ComponentTable title="PEMASUKAN" type="debit" data={dataFitered.debit} buttonFilter={buttonFilter} isAdmin={isAdmin} />
         </div>
 
-        <div class="col-xs-12 col-lg-6">
-            <ComponentTable title="PENGELUARAN" type="kredit" data={dataFitered.kredit} />
+        <div class="col-12 col-6-lg">
+            <ComponentTable title="PENGELUARAN" type="kredit" data={dataFitered.kredit} isAdmin={isAdmin} />
         </div>
     </div>
 
     <!-- Footer -->
     <div class="footer">
-        <!-- <div class="row">
-            <div class="col-auto">
+        <div class="row" >
+            <div class="col-6">
                 <span> Jumlah Saldo </span>
             </div>
-            <div class="col-0">
+            
+            <div class="col-6 total">
                 <span> {viewRupiah(dataFitered.saldo)} </span>
-            </div>
-        </div> -->
-
-        <div class="container">
-            <div class="row" >
-                <div class="col-xs">
-                    <span> Jumlah Saldo </span>
-                </div>
-                
-                <div class="col-xs total">
-                    <span> {viewRupiah(dataFitered.saldo)} </span>
-                </div>
             </div>
         </div>
     </div>
@@ -367,7 +359,7 @@
 {/if}
 
 <style>
-    .col-xs-12 {
+    .col-12 {
         margin-bottom: 1rem;
     }
 
@@ -376,7 +368,8 @@
         position: fixed;
         bottom: 0;
         left: 0;
-        background-color: var(--pico-background-color);
+        padding-inline: 5dvw;
+        background-color: var(--bg-color);
 
         .total {
             display: flex;

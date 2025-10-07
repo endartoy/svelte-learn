@@ -69,77 +69,69 @@
     }
 </script>
 
-<div class="user-card {!user?.role ? 'unregistered' : ''}" >
+<fieldset class="user-card {!user?.role ? 'bg-light' : 'bd-primary'}" >
+    <legend>
+        <span class="username"> {user?.displayName || 'Username'} </span>
+    </legend>
+
     <div class="body">
         <img class="avatar" src={user?.photoURL ? user?.photoURL : '/p2g.png'} alt="user avatar">
-        <span class="username"> {user?.displayName || 'Username'} </span>
         <span class="email"> ({user?.email || 'dummyemail@email.com'}) </span>
-        <div class="field">
+        <p>
             <label for={user?.id} class="label" > Role </label>
             <input id={user?.id} class="input" disabled={!isEdit} type="text" bind:value={formData.role} placeholder="" />
-        </div>
+        </p>
     </div>
 
     <div class="footer" >
-        <div class="row">
-            {#if !isEdit}
-            <button onclick={() => fnDeleteUser()} class="col-xs danger">
+        {#if !isEdit}
+            <button onclick={() => fnDeleteUser()} class="button error icon-only">
                 <span>HAPUS</span>
                 <!-- <span><i class="fa-solid fa-trash-can"></i></span> -->
             </button>
-            {/if}
-    
-            <button onclick={() => {!isEdit ? toggleEdit() : toggleUpdate()}} class="col-xs {!isEdit ? 'warning' : 'primary'}" > 
-                <span>{!isEdit ? 'EDIT' : 'SIMPAN'}</span> 
-                <!-- <span><i class="fa-solid fa-floppy-disk"></i></span> -->
-            </button>
-        </div>
+        {/if}
+
+        <button onclick={() => {!isEdit ? toggleEdit() : toggleUpdate()}} class="button {!isEdit ? 'primary' : ''}" > 
+            <span>{!isEdit ? 'EDIT' : 'SIMPAN'}</span> 
+            <!-- <span><i class="fa-solid fa-floppy-disk"></i></span> -->
+        </button>
     </div>
-</div>
+</fieldset>
 
 <style>
     .user-card {
         min-height: 100px;
         padding: 4%;
-        background-color: #64ffda ;
+
+        .username {
+            font-size: 16pt;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
 
         >.body {
             display: flex;
             flex-direction: column;
             column-gap: 1;
             align-items: center;
-
             >.avatar {
                 height: 150px;
                 width: 150px;
                 border-radius: 75px;
                 object-fit: cover;
             }
-
-            >.username {
-                font-size: larger;
-                font-weight: 500;
-                text-transform: uppercase;
-            }
             >.email {
                 font-weight: 200;
                 font-style: italic;
+                margin-bottom: 1em;
             }
         }
 
         >.footer {
             margin-top: 0.5rem;
-
-            .col-xs {
-                margin-left: 1rem;
-                margin-right: 1rem;
-                margin-bottom: 0.5rem;
-            }
+            width: 100%;
+            display: inline-flex;
+            justify-content: center;
         }
-
-        &.unregistered {
-            background-color: #bdbdbd;
-        } 
-
     }
 </style>
