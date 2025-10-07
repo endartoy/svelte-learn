@@ -2,7 +2,7 @@
     let { children } = $props()
 
     // css file
-    import '$lib/css/chota.css';
+    // import '$lib/css/chota.css';
 
     // component alert
     import ComponentAlert from "./ComponentAlert.svelte";
@@ -84,7 +84,7 @@
     <title> .rndm </title>
 
     <!-- style chota.css -->
-    <!-- <link rel="stylesheet" href={chota}> -->
+    <link rel="stylesheet" href="/style/chota.css">
 </svelte:head>
 
 <nav class="nav bg-light">
@@ -189,20 +189,25 @@
         flex-basis: auto;
         width: auto;
 
-        button, .button {
-            border-radius: 99px;
+        summary.button {
+            max-height: 50px;
+            padding: 0;
+            align-items: center;
+            display: flex;
+            border-radius: 40px;
         }
 
-        .avatar {
-            width: 20px;
-            height: 20px;
-            border-radius: 10px;
+        summary > .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 40px;
         }
 
         details.dropdown > :last-child {
             position: absolute;
             right: 0;
             left: auto;
+            margin-top: 5px;
             white-space: nowrap;
         }
     }

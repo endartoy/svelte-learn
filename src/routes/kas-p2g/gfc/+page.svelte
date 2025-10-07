@@ -51,12 +51,18 @@
                 reject()
             }
         })
-        .then(async(result) => {
+        .then(async() => {
             if (!captureEl && doCapture) return
         
             try {
                 const canvas = await html2canvas(captureEl, {
-                    useCORS: true
+                    useCORS: true,
+                    onclone: (clonedDoc) => {
+                        const style = clonedDoc.createElement('link');
+                        style.rel = 'stylesheet';
+                        style.href = '/style/chota.css';
+                        clonedDoc.head.appendChild(style);
+                    }
                 })
                 const pngUrl = canvas.toDataURL('image/png')
                 const link = document.createElement("a")
