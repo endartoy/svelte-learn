@@ -40,6 +40,8 @@
     const buttonToPdf = async() => {
         const doPrint = confirm("Ekport to PDF ?")
         if (!doPrint) return
+
+        loadingStore.show()
         
         // initial table header for pdf
         const tableHeader = [
@@ -245,6 +247,8 @@
 
         // Save the PDF
         doc.save('Laporan KAS P2G ('+ new Date().toLocaleDateString('id-ID', dateOption.dateForPdf as Intl.DateTimeFormatOptions) +').pdf');
+
+        loadingStore.hide()
     }
 
     $effect(() => {

@@ -21,8 +21,21 @@
                 this.formData = initialFormData
             }         
         }
-        show(val = null) { this.isVisible = true, this.setFormData(val); disableBodyScroll() }
-        hide() { this.isVisible = false, this.setFormData(); disableBodyScroll(false) }
+        show(val = null) { 
+            this.isVisible = true
+            this.setFormData(val)
+            disableBodyScroll()
+            
+            pushState("", "")
+        }
+        ___hide() { 
+            this.isVisible = false
+            this.setFormData()
+            disableBodyScroll(false) 
+        }
+        hide() {
+            history.back()
+        }
     }
     export let modalForm = new classModalForm
 </script>
@@ -34,7 +47,8 @@
 	import { loadingStore } from "$lib/stores/loadingStore";
 
     import { addPeriode, updatePeriode, softDelPeriode  } from "$lib/supabase/tb_periode"
-	import { goto } from "$app/navigation";
+	import { goto, pushState } from "$app/navigation";
+	import { onMount } from "svelte";
 
     // init formData
     let formData = modalForm.formData
@@ -98,6 +112,24 @@
         })
         .finally(() => loadingStore.hide())
     }
+
+    // Handle popstate event (back/forward button)
+    onMount(() => {
+        const handlePopState = (event) => {
+            // Close modal when back button is pressed
+            if (modalForm.isVisible) {
+                modalForm.___hide()
+            }
+        };
+
+        // Add popstate event listener
+        window.addEventListener('popstate', handlePopState);
+
+        // Cleanup event listener on component destroy
+        return () => {
+            window.removeEventListener('popstate', handlePopState);
+        };
+    });
 </script>
 
 <dialog open transition:fade>
@@ -168,9 +200,9 @@
 <style>
     /* variabel */
     :root {
-        --form-width: 95vw;
-        --form-height: 75vh;
-        @media (min-width: 480px) { --form-width: 95vw; --form-height: 75vh;}
+        --form-width: 100vw;
+        --form-height: 100vh;
+        @media (min-width: 480px) { --form-width: 100vw; --form-height: 100vh;}
         @media (min-width: 768px) { --form-width: 75vw; --form-height: 80vh;}
         @media (min-width: 1024px) { --form-width: 50vw; --form-height: 85vh;}
     }
@@ -185,6 +217,7 @@
 
         width: var(--form-width);
         height: var(--form-height);
+        padding: 0.8rem;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
         overflow: auto;
         position: relative;

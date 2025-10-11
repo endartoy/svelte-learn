@@ -20,8 +20,21 @@
                 this.formData = initialFormData
             }         
         }
-        show(val = null) { this.isVisible = true, this.setFormData(val); disableBodyScroll() }
-        hide() { this.isVisible = false, this.setFormData(); disableBodyScroll(false) }
+        show(val = null)  { 
+            this.isVisible = true 
+            this.setFormData(val) 
+            disableBodyScroll()
+            // Push a new state to the history to allow back button detection
+            pushState("")
+        }
+        ___hide() { 
+            this.isVisible = false 
+            this.setFormData() 
+            disableBodyScroll(false);
+        }
+        hide() {
+            history.back()
+        }
     }
     export let modalForm = new classModalForm
 </script>
@@ -36,6 +49,8 @@
 	import { alertStore } from "$lib/stores/alertStore";
 	import { loadingStore } from "$lib/stores/loadingStore";
 	import { onMount } from "svelte";
+	import { pushState } from "$app/navigation";
+	import { page } from "$app/state";
 
     let formData = modalForm.formData
 
@@ -91,6 +106,24 @@
         }
     }
 
+    // Handle popstate event (back/forward button)
+    onMount(() => {
+        const handlePopState = (event) => {
+            // Close modal when back button is pressed
+            if (modalForm.isVisible) {
+                modalForm.___hide()
+            }
+        };
+
+        // Add popstate event listener
+        window.addEventListener('popstate', handlePopState);
+
+        // Cleanup event listener on component destroy
+        return () => {
+            window.removeEventListener('popstate', handlePopState);
+        };
+    });
+
     // $inspect(formData)
 </script>
 
@@ -98,7 +131,7 @@
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div class="backdrop" onclick={() => modalForm.hide()}> </div>
-
+    
     <div class="content">
         <form onsubmit={(e) => {saveData(e)}} class='kas-form {formData.type}' >
             <fieldset>
@@ -157,18 +190,18 @@
 <style>
     /* variabel */
     :root {
-        --kas-form-width: 95vw;
-        --kas-form-height: 95vh;
+        --kas-form-width: 100vw;
+        --kas-form-height: 100vh;
 
-        @media (min-width: 480px) { --kas-form-width: 95vw; }
-        @media (min-width: 768px) { --kas-form-width: 75vw; }
-        @media (min-width: 1024px) { --kas-form-width: 50vw; }
+        @media (min-width: 480px) { --kas-form-width: 95vw; --kas-form-height: 95vh;}
+        @media (min-width: 768px) { --kas-form-width: 75vw; --kas-form-height: 85vh;}
+        @media (min-width: 1024px) { --kas-form-width: 50vw; --kas-form-height: 80vh;}
     }
 
-    .content {
+    /* .content {
         bottom: 0;
         transform: translate(-50%, 0);
-    }
+    } */
 
     /* style */
     .kas-form {
@@ -176,12 +209,18 @@
         --kredit: #ffe082;
 
         width: var(--kas-form-width);
-        max-height: var(--kas-form-height);
+        height: var(--kas-form-height);
         padding: 1rem;
         font-family: monospace;
 
         overflow: scroll;
         transition: background-color 500ms ease;
+
+        fieldset {
+            height: 100%;
+            position: relative;
+            padding-bottom: 50px;
+        }
 
         /* header */
         fieldset > legend {
@@ -206,10 +245,14 @@
             }
         }    
     
-        .form-footer {
-            position: sticky;
+        /* Footer */
+        fieldset > .form-footer {
+            position: absolute;
             width: 100%;
             bottom: 0;
+            left: 0;
+            padding: 1rem 2rem;
+
             display: inline-flex;
             justify-content: end;
             gap: 10px;

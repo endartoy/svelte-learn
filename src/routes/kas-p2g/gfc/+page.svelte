@@ -9,6 +9,7 @@
 	import { onDestroy, onMount } from "svelte";
 	import { viewRupiah, dateOption } from "$lib/tools";
 	import html2canvas from "html2canvas";
+	import { error } from "@sveltejs/kit";
 
     // isAdmin
     let isAdmin = $derived(['superadmin', 'gadenfc'].includes($userStore?.role))
@@ -42,7 +43,9 @@
 
     let captureEl: HTMLElement = $state(null)
     let doCapture = $state(false)
+    // to PNG
     const toPng = async() => {
+        loadingStore.show() 
         new Promise((resolve, reject) => {
             doCapture = true
             if (doCapture) {
@@ -73,8 +76,14 @@
                 console.error(error)
             }
         })
-        .catch((error) => {console.error(error)})
-        .finally(() => { doCapture = false })
+        .catch((error) => { 
+            console.error(error) 
+            alertStore.show(error, 'danger')
+        })
+        .finally(() => { 
+            doCapture = false
+            loadingStore.hide() 
+        })
     }
 
     $effect(() => {

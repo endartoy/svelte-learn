@@ -60,6 +60,8 @@
 
     onMount(() => {
         getData()
+
+        
     })
 </script>
 
