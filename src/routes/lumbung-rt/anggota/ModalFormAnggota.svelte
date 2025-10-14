@@ -183,9 +183,9 @@
 <style>
     /* variabel */
     :root {
-        --form-width: 100vw;
-        --form-height: 100vh;
-        @media (min-width: 480px) { --form-width: 100vw; --form-height: 100vh;}
+        --form-width: calc(100svw - 10px);
+        --form-height: calc(100svh - 10px);
+        @media (min-width: 480px) { --form-width: calc(100svw - 10px); --form-height: calc(100svh - 10px);}
         @media (min-width: 768px) { --form-width: 75vw; --form-height: 80vh;}
         @media (min-width: 1024px) { --form-width: 50vw; --form-height: 85vh;}
     }

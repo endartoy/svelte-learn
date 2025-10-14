@@ -217,11 +217,11 @@
 <style>
     /* variabel */
     :root {
-        --form-width: 95vw;
-        --form-height: 100vh;
-        @media (min-width: 480px) { --form-width: 95vw; --form-height: 100vh }
-        @media (min-width: 768px) { --form-width: 75vw; --form-height: 85vh }
-        @media (min-width: 1024px) { --form-width: 50vw; --form-height: 80vh }
+        --form-action-width: 95svw;
+        --form-action-height: 100svh;
+        @media (min-width: 480px) { --form-action-width: 95vw; --form-action-height: 100svh }
+        @media (min-width: 768px) { --form-action-width: 75vw; --form-action-height: 85svh }
+        @media (min-width: 1024px) { --form-action-width: 50vw; --form-action-height: 80svh }
     }
 
     /* style */
@@ -236,7 +236,7 @@
             background-color: color-mix(in srgb, var(--bg-color), white 30%);
         }
 
-        width: var(--form-width);
+        width: var(--form-action-width);
         /* height: var(--form-height); */
         padding: 0.8rem;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);

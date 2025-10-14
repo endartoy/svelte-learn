@@ -124,7 +124,7 @@
         };
     });
 
-    // $inspect(formData)
+    // $inspect()
 </script>
 
 <dialog open transition:fade={{duration: 100}}>
@@ -133,7 +133,7 @@
     <div class="backdrop" onclick={() => modalForm.hide()}> </div>
     
     <div class="content">
-        <form onsubmit={(e) => {saveData(e)}} class='kas-form {formData.type}' >
+        <form onsubmit={(e) => {saveData(e)}} class='kas-form {formData.type}'>
             <fieldset>
                 <legend>
                     <span class="title">
@@ -190,10 +190,10 @@
 <style>
     /* variabel */
     :root {
-        --kas-form-width: 100vw;
-        --kas-form-height: 100vh;
+        --kas-form-width: calc(100svw - 10px);
+        --kas-form-height: calc(100svh - 10px);
 
-        @media (min-width: 480px) { --kas-form-width: 95vw; --kas-form-height: 95vh;}
+        @media (min-width: 480px) { --kas-form-width: calc(100svw - 10px); --kas-form-height:calc(100svh - 10px);}
         @media (min-width: 768px) { --kas-form-width: 75vw; --kas-form-height: 85vh;}
         @media (min-width: 1024px) { --kas-form-width: 50vw; --kas-form-height: 80vh;}
     }

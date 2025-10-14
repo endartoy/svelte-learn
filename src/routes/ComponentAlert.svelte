@@ -19,6 +19,16 @@
         <p> {alert?.message} </p>
     </div>
     {/each}
+
+    <!-- <div 
+        role="alert"
+        aria-live="assertive"
+        class='alert-container danger'
+        transition:fade={{duration:300}}
+    >
+        <button class="close" aria-label="close"></button>
+        <p> Tes Notif Tes Notif  </p>
+    </div> -->
 </div>
 {/if}
 
@@ -26,17 +36,17 @@
     /* Alert */
     .alert-space {
         position: fixed;
-        top: 0;
-        right: 0;
+        top: 1em;
+        right: 1em;
         z-index: 300;
         justify-items:end;
+        max-width: 100%;
     }
 
     .alert-container {
-        max-width: 90%;
+        /* width: 100%; */
         text-align: end;
         padding: 1em;
-        margin: 1em;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
         position: relative;
 

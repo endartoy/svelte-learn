@@ -190,8 +190,8 @@
 <style>
     /* variabel */
     :root {
-        --kas-form-width: 100vw;
-        --kas-form-height: 100vh;
+        --kas-form-width: calc(100svw - 10px);
+        --kas-form-height: calc(100svh - 10px);
 
         @media (min-width: 480px) { --kas-form-width: 95vw; --kas-form-height: 95vh;}
         @media (min-width: 768px) { --kas-form-width: 75vw; --kas-form-height: 85vh;}
