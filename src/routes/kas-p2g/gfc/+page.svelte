@@ -196,7 +196,7 @@
 <!-- htmltoCanvas -->
 <div bind:this={captureEl} class="html-to-canvas" class:hide={!doCapture}>
     <span class="text-center">
-        <h5>KAS GADEN FC - 22/12/2025</h5>
+        <h5>KAS GADEN FC - {new Date().toLocaleDateString('id-ID', dateOption.dateForPdf as Intl.DateTimeFormatOptions)}</h5>
     </span>
     <br>
     
